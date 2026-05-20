@@ -2,806 +2,567 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Китайский квест — MVP v3</title>
-  <meta name="description" content="MVP-демо детского приложения для изучения китайского языка через сюжетный квест, выбор героя, напарника и ИИ-генерацию мира." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Китайский квест — MVP v4</title>
   <style>
     :root {
-      --bg: #f6f2ea;
-      --card: rgba(255,255,255,.84);
-      --ink: #172033;
-      --muted: #677085;
-      --brand: #d33b30;
-      --brand2: #f3a51d;
-      --good: #0f8b62;
-      --bad: #b42318;
-      --blue: #2563eb;
-      --line: rgba(23,32,51,.12);
-      --shadow: 0 18px 48px rgba(42, 28, 18, .16);
-      --radius: 26px;
+      --bg:#f6f0e8; --card:#fffaf4; --ink:#172033; --muted:#667085;
+      --brand:#d33b30; --brand2:#f3b43f; --green:#169b62; --blue:#2563eb;
+      --line:rgba(23,32,51,.12); --shadow:0 18px 60px rgba(23,32,51,.12);
+      --bad:#b42318;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at 12% 12%, rgba(243,165,29,.28), transparent 24%),
-        radial-gradient(circle at 80% 20%, rgba(211,59,48,.18), transparent 28%),
-        linear-gradient(135deg, #fff8ec 0%, #f5efe7 48%, #eef3ff 100%);
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:
+      radial-gradient(circle at 18% 10%,rgba(243,180,63,.28),transparent 30%),
+      radial-gradient(circle at 80% 6%,rgba(211,59,48,.16),transparent 35%),
+      linear-gradient(180deg,#fffaf4,#f6f0e8 55%,#efe4d3); color:var(--ink);}
+    .wrap{max-width:1120px;margin:0 auto;padding:24px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
+    .logo{display:flex;align-items:center;gap:12px;font-weight:950;font-size:20px}
+    .logo-badge{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),#8d1f18);color:white;box-shadow:var(--shadow)}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:rgba(255,250,244,.7);font-size:13px;color:var(--muted);font-weight:700}
+    .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:stretch}
+    .card{background:rgba(255,250,244,.86);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:24px}
+    h1{font-size:42px;line-height:1.05;margin:0 0 14px;letter-spacing:-.03em}
+    h2{font-size:26px;margin:0 0 12px;letter-spacing:-.02em}
+    h3{font-size:18px;margin:18px 0 8px}
+    p{color:var(--muted);line-height:1.55;margin:0 0 12px}
+    .strong{color:var(--ink);font-weight:850}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    label{display:block;font-weight:850;margin:12px 0 7px}
+    input, select, textarea{width:100%;border:1px solid var(--line);background:white;border-radius:16px;padding:13px 14px;font:inherit;outline:none}
+    textarea{min-height:84px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:rgba(211,59,48,.55);box-shadow:0 0 0 4px rgba(211,59,48,.1)}
+    button{border:0;border-radius:18px;background:linear-gradient(135deg,var(--brand),#b82d25);color:white;font-weight:900;padding:14px 18px;cursor:pointer;box-shadow:0 10px 24px rgba(211,59,48,.22);font-size:15px}
+    button.secondary{background:white;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+    button.good{background:linear-gradient(135deg,var(--green),#087443)}
+    button.blue{background:linear-gradient(135deg,var(--blue),#1747a8)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .screen{display:none}
+    .screen.active{display:block}
+    .avatar{min-height:360px;position:relative;overflow:hidden;background:
+      linear-gradient(135deg,rgba(211,59,48,.12),rgba(243,180,63,.16)),
+      url("data:image/svg+xml,%3Csvg width='700' height='420' viewBox='0 0 700 420' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d33b30' stroke-opacity='.16'%3E%3Cpath d='M50 330 C180 230 210 390 350 270 S530 240 650 120' stroke-width='8'/%3E%3Ccircle cx='545' cy='112' r='78' stroke-width='10'/%3E%3Cpath d='M120 110h130M155 75v120M430 290h125M465 250v80' stroke-width='9' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") center/cover;
     }
-    .app { width: min(1120px, 100%); margin: 0 auto; padding: 24px; }
-    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
-    .logo { display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: -.02em; }
-    .logo-mark { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 16px; background: linear-gradient(135deg, var(--brand), var(--brand2)); box-shadow: 0 10px 24px rgba(211,59,48,.28); color: white; font-size: 24px; }
-    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-    .pill { border: 1px solid var(--line); background: rgba(255,255,255,.58); border-radius: 999px; padding: 9px 12px; color: var(--muted); font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
-    main.grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; align-items: stretch; }
-    .card { background: var(--card); border: 1px solid rgba(255,255,255,.72); border-radius: var(--radius); box-shadow: var(--shadow); backdrop-filter: blur(12px); padding: 24px; }
-    .hero-card { min-height: 575px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
-    .hero-card::after { content: "汉语"; position: absolute; right: -18px; bottom: -42px; font-size: 132px; font-weight: 900; color: rgba(211,59,48,.07); pointer-events: none; }
-    h1, h2, h3 { margin: 0; line-height: 1.08; }
-    h1 { font-size: clamp(34px, 5vw, 64px); letter-spacing: -.06em; }
-    h2 { font-size: clamp(26px, 3vw, 38px); letter-spacing: -.04em; }
-    h3 { font-size: 18px; letter-spacing: -.02em; }
-    p { color: var(--muted); line-height: 1.55; margin: 12px 0 0; }
-    .accent { color: var(--brand); }
-    .small { font-size: 13px; color: var(--muted); }
-    .big-chinese { font-size: clamp(48px, 12vw, 116px); font-weight: 900; line-height: .9; margin: 16px 0; }
-    .pinyin { color: var(--brand); font-weight: 800; font-size: 24px; }
-    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-    button, .btn { appearance: none; border: 0; border-radius: 18px; padding: 13px 16px; background: #1f2937; color: #fff; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(31,41,55,.14); transition: transform .12s ease, opacity .12s ease, background .12s ease; font-size: 15px; }
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(1px); }
-    button.secondary { background: rgba(31,41,55,.08); color: var(--ink); box-shadow: none; border: 1px solid var(--line); }
-    button.gold { background: linear-gradient(135deg, var(--brand), var(--brand2)); }
-    button.good { background: var(--good); }
-    button.blue { background: var(--blue); }
-    button.bad { background: var(--bad); }
-    button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
-    input, select, textarea { width: 100%; border: 1px solid var(--line); border-radius: 18px; padding: 14px 15px; font-size: 16px; outline: none; background: rgba(255,255,255,.76); color: var(--ink); margin-top: 8px; }
-    select { cursor: pointer; }
-    textarea { min-height: 92px; resize: vertical; }
-    label { font-weight: 800; display: block; margin-top: 16px; }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .stepper { display: grid; gap: 10px; margin-top: 18px; }
-    .step { display: flex; align-items: center; gap: 12px; padding: 13px; border-radius: 20px; background: rgba(255,255,255,.6); border: 1px solid var(--line); }
-    .step-num { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: rgba(211,59,48,.1); color: var(--brand); font-weight: 900; flex: 0 0 auto; }
-    .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-    .choice { min-height: 150px; border: 2px solid transparent; border-radius: 24px; padding: 18px; background: rgba(255,255,255,.7); cursor: pointer; transition: transform .12s ease, border-color .12s ease, background .12s ease; }
-    .choice:hover { transform: translateY(-2px); border-color: rgba(211,59,48,.35); }
-    .choice.selected { border-color: var(--brand); background: rgba(255,241,235,.92); }
-    .emoji { font-size: 42px; line-height: 1; margin-bottom: 10px; }
-    .choice strong { display: block; font-size: 18px; }
-    .choice span { display: block; font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.35; }
-    .ai-box { margin-top: 18px; padding: 16px; border-radius: 22px; background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.25); }
-    .ai-box b { color: var(--blue); }
-    .side-card { display: grid; gap: 14px; }
-    .metric { padding: 16px; border-radius: 22px; background: rgba(255,255,255,.62); border: 1px solid var(--line); }
-    .metric b { font-size: 24px; display: block; }
-    .metric span { color: var(--muted); font-size: 13px; }
-    .progress { height: 12px; background: rgba(23,32,51,.08); border-radius: 999px; overflow: hidden; margin-top: 12px; }
-    .progress > div { height: 100%; width: 0%; background: linear-gradient(90deg, var(--brand), var(--brand2)); border-radius: 999px; transition: width .25s ease; }
-    .dialogue { display: grid; gap: 12px; margin-top: 18px; }
-    .bubble { padding: 14px 16px; border-radius: 20px; background: rgba(255,255,255,.72); border: 1px solid var(--line); max-width: 88%; }
-    .bubble.npc { border-top-left-radius: 6px; }
-    .bubble.user { justify-self: end; background: rgba(211,59,48,.09); border-top-right-radius: 6px; }
-    .bubble .speaker { font-size: 12px; color: var(--muted); font-weight: 800; margin-bottom: 4px; }
-    .word-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 18px; }
-    .word { border: 1px solid var(--line); background: rgba(255,255,255,.66); border-radius: 20px; padding: 14px; }
-    .word .hanzi { font-size: 26px; font-weight: 900; }
-    .word .translation { color: var(--muted); font-size: 14px; }
-    .quiz-options { display: grid; gap: 10px; margin-top: 18px; }
-    .quiz-options button { text-align: left; background: rgba(255,255,255,.78); border: 1px solid var(--line); box-shadow: none; color: var(--ink); }
-    .hidden { display: none !important; }
-    .footer-note { margin-top: 18px; font-size: 12px; color: var(--muted); }
-    .parent-box { margin-top: 18px; padding: 16px; border-radius: 22px; background: rgba(15,139,98,.08); border: 1px solid rgba(15,139,98,.25); }
-    .story-map { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
-    .map-node { min-height: 72px; border-radius: 18px; border: 1px dashed var(--line); display: grid; place-items: center; text-align: center; padding: 10px; color: var(--muted); background: rgba(255,255,255,.45); font-size: 12px; }
-    .map-node.open { border-style: solid; color: var(--ink); background: rgba(255,255,255,.82); font-weight: 800; }
-    .toast { margin-top: 12px; color: var(--bad); font-weight: 800; }
-
-    .tone-guide { margin-top: 18px; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: rgba(255,255,255,.66); }
-    .tone-row { display: grid; grid-template-columns: 88px 1fr 80px 1.2fr; gap: 10px; padding: 11px 13px; border-top: 1px solid rgba(23,32,51,.08); align-items: center; font-size: 13px; }
-    .tone-row:first-child { border-top: 0; background: rgba(211,59,48,.07); font-weight: 900; }
-    .tone-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; padding: 5px 9px; border-radius: 999px; background: rgba(211,59,48,.09); color: var(--brand); font-weight: 900; }
-    .pronounce { margin-top: 10px; padding: 11px; border-radius: 16px; background: rgba(37,99,235,.07); border: 1px solid rgba(37,99,235,.16); }
-    .pronounce-title { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--blue); font-weight: 900; margin-bottom: 6px; }
-    .syllables { display: grid; gap: 7px; }
-    .syllable { display: grid; grid-template-columns: 74px 1fr; gap: 8px; align-items: start; font-size: 13px; color: var(--muted); }
-    .syllable b { color: var(--ink); font-size: 14px; }
-    .voice-hint { margin-top: 8px; color: var(--ink); font-weight: 800; font-size: 13px; }
-    @media (max-width: 850px) {
-      .tone-row { grid-template-columns: 1fr; gap: 4px; }
-      .syllable { grid-template-columns: 1fr; gap: 2px; }
-    }
-    @media (max-width: 850px) {
-      .app { padding: 16px; }
-      main.grid { grid-template-columns: 1fr; }
-      .choice-grid, .two { grid-template-columns: 1fr; }
-      .word-list { grid-template-columns: 1fr; }
-      header { align-items: flex-start; flex-direction: column; }
-      .top-actions { justify-content: flex-start; }
-      .story-map { grid-template-columns: repeat(2, 1fr); }
-      .bubble { max-width: 100%; }
-    }
+    .scene-title{position:absolute;left:22px;right:22px;bottom:22px;background:rgba(255,250,244,.87);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:22px;padding:16px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:white;color:var(--muted);font-weight:800;font-size:13px}
+    .timeline{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin:16px 0}
+    .day{border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;background:white;font-weight:950;color:var(--muted);cursor:pointer}
+    .day.active{background:var(--brand);color:white;border-color:var(--brand)}
+    .day.done{background:rgba(22,155,98,.1);color:var(--green);border-color:rgba(22,155,98,.35)}
+    .day.locked{opacity:.45;cursor:not-allowed}
+    .lesson{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px}
+    .dialogue{display:grid;gap:10px}
+    .bubble{border-radius:20px;padding:13px 15px;border:1px solid var(--line);background:white}
+    .bubble.friend{background:rgba(243,180,63,.12)}
+    .bubble.companion{background:rgba(37,99,235,.07)}
+    .bubble b{display:block;margin-bottom:5px}
+    .word-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+    .word{border:1px solid var(--line);border-radius:22px;padding:15px;background:white}
+    .hanzi{font-size:34px;font-weight:950}
+    .pinyin{font-size:16px;color:var(--brand);font-weight:950}
+    .small{font-size:13px;color:var(--muted);line-height:1.45}
+    .tone-guide{margin-top:14px;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:rgba(255,255,255,.7)}
+    .tone-row{display:grid;grid-template-columns:80px 1fr 70px 1.2fr;gap:8px;padding:10px 12px;border-top:1px solid rgba(23,32,51,.08);align-items:center;font-size:13px}
+    .tone-row:first-child{border-top:0;background:rgba(211,59,48,.07);font-weight:950}
+    .pronounce{margin-top:10px;padding:10px;border-radius:16px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.14)}
+    .syllable{font-size:13px;color:var(--muted);margin:5px 0}
+    .syllable b{color:var(--ink)}
+    .quiz{display:grid;gap:10px;margin-top:14px}
+    .option{display:block;text-align:left;width:100%;background:white;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+    .option.selected{border-color:var(--brand);background:rgba(211,59,48,.08)}
+    .result{border-radius:22px;padding:16px;background:rgba(22,155,98,.09);border:1px solid rgba(22,155,98,.25)}
+    .warning{border-radius:18px;padding:12px 14px;background:rgba(243,180,63,.12);border:1px solid rgba(243,180,63,.35);color:#7a4b00;font-weight:750}
+    .roadmap{display:grid;gap:10px;margin-top:12px}
+    .road{border:1px solid var(--line);border-radius:20px;padding:14px;background:white}
+    .road b{color:var(--ink)}
+    .bar{height:13px;background:rgba(23,32,51,.08);border-radius:999px;overflow:hidden}
+    .bar div{height:100%;background:linear-gradient(90deg,var(--green),var(--brand2));width:0%}
+    .footer{margin-top:22px;color:var(--muted);font-size:13px}
+    .devpanel{border:1px dashed rgba(37,99,235,.35);background:rgba(37,99,235,.05);border-radius:22px;padding:14px;margin-top:14px}
+    .toast{margin-top:10px;color:var(--bad);font-weight:850}
+    @media(max-width:880px){.hero,.lesson{grid-template-columns:1fr}.grid,.grid3,.word-list{grid-template-columns:1fr}.timeline{grid-template-columns:repeat(5,1fr)}h1{font-size:32px}.tone-row{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="wrap">
     <header>
-      <div class="logo">
-        <div class="logo-mark">龙</div>
-        <div>
-          <div>Китайский квест</div>
-          <div class="small">MVP v3: герой, напарник, мир и тоны</div>
-        </div>
-      </div>
-      <div class="top-actions">
-        <span class="pill" id="profilePill">Гость</span>
-        <button class="secondary" id="resetBtn" title="Очистить локальный прогресс">Сбросить демо</button>
-      </div>
+      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v4</span></div></div>
+      <span class="pill">10 дней · роль ребёнка · ИИ-ready</span>
     </header>
 
-    <main class="grid">
-      <section class="card hero-card" id="mainCard"></section>
-      <aside class="card side-card" id="sideCard"></aside>
-    </main>
+    <section class="screen active" id="start">
+      <div class="hero">
+        <div class="card">
+          <h1>Пройди 10 дней как ребёнок и родитель</h1>
+          <p><span class="strong">Цель MVP v4:</span> показать, что выбранная ребёнком роль не исчезает после первого урока, а становится линией истории на несколько дней.</p>
+          <p>Сейчас это демо с локальной генерацией. Если подключить backend, следующие дни может генерировать ИИ.</p>
+          <div class="btn-row">
+            <button onclick="go('profile')">Начать заново</button>
+            <button class="secondary" onclick="loadSaved()">Продолжить</button>
+          </div>
+          <div class="warning" style="margin-top:16px">Для инвестора лучше сделать скриншоты 1-го, 2-го и 7-го дня: так видно, что у ребёнка есть собственная роль, напарник и развитие.</div>
+        </div>
+        <div class="card avatar">
+          <div class="scene-title">
+            <div class="chips"><span class="chip">футболист</span><span class="chip">маг</span><span class="chip">археолог</span><span class="chip">свой герой</span></div>
+            <h2>Мир не общий для всех. Мир строится вокруг ребёнка.</h2>
+            <p>Если ребёнок выбрал футболиста, он учит китайский через тренировку, друга, команду и матч.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="profile">
+      <div class="card">
+        <h2>Регистрация для теста</h2>
+        <div class="grid">
+          <div><label>Имя ребёнка</label><input id="childName" placeholder="Например, Дима"></div>
+          <div><label>Имя родителя</label><input id="parentName" placeholder="Например, Дмитрий"></div>
+        </div>
+        <div class="grid">
+          <div>
+            <label>Путь героя</label>
+            <select id="heroSelect" onchange="toggleCustom('hero')">
+              <option value="football">Футболист</option>
+              <option value="magic">Маг</option>
+              <option value="archaeology">Археолог</option>
+              <option value="robot">Робот</option>
+              <option value="cosmos">Космонавт</option>
+              <option value="custom">Нет в списке — написать своего</option>
+            </select>
+          </div>
+          <div id="heroCustomBox" style="display:none">
+            <label>Свой герой</label>
+            <input id="heroCustom" placeholder="Например, гонщик, художник, шахматист">
+          </div>
+        </div>
+        <label>Что ребёнку нравится в этой теме?</label>
+        <textarea id="heroInterest" placeholder="Например: любит футбол, матчи, форму, голы и команду"></textarea>
+
+        <div class="grid">
+          <div>
+            <label>Напарник</label>
+            <select id="companionSelect" onchange="toggleCustom('companion')">
+              <option value="panda">Панда</option>
+              <option value="dragon">Дракон</option>
+              <option value="robot">Робот</option>
+              <option value="phoenix">Феникс</option>
+              <option value="compass">Говорящий компас</option>
+              <option value="custom">Нет в списке — написать своего</option>
+            </select>
+          </div>
+          <div id="companionCustomBox" style="display:none">
+            <label>Свой напарник</label>
+            <input id="companionCustom" placeholder="Например, вихрь, говорящий мяч, динозавр">
+          </div>
+        </div>
+
+        <div class="devpanel">
+          <h3>AI-ready настройка</h3>
+          <p>Оставь пустым — демо работает само. Когда запустишь backend с OpenAI, сюда можно вставить URL, например <b>http://127.0.0.1:8000</b>.</p>
+          <label>AI backend URL</label>
+          <input id="aiUrl" placeholder="http://127.0.0.1:8000">
+        </div>
+
+        <div class="btn-row"><button onclick="saveProfile()">Создать мир</button><button class="secondary" onclick="go('start')">Назад</button></div>
+        <div class="toast" id="profileError"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="world">
+      <div class="card">
+        <div class="btn-row" style="justify-content:space-between;margin-top:0">
+          <div><h2 id="worldTitle">Мир героя</h2><p id="worldSub"></p></div>
+          <button class="secondary" onclick="resetAll()">Сбросить тест</button>
+        </div>
+        <div class="chips" id="profileChips"></div>
+        <div class="bar"><div id="progressBar"></div></div>
+        <div class="timeline" id="timeline"></div>
+        <div id="dayContent"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="parent">
+      <div class="card">
+        <h2>Кабинет родителя</h2>
+        <p>Здесь видно, что ребёнок не просто нажимает кнопки, а движется по личной линии героя.</p>
+        <div id="parentSummary"></div>
+        <h3>Что важно показать инвестору</h3>
+        <div class="roadmap">
+          <div class="road"><b>Роль сохранена:</b> ребёнок выбрал путь, и все дни связаны с ним.</div>
+          <div class="road"><b>Напарник сохранён:</b> он не декорация, а участник диалогов.</div>
+          <div class="road"><b>Языковой пароль:</b> без повторения прошлого дня сюжет не двигается.</div>
+          <div class="road"><b>Будущий ИИ:</b> будет генерировать новые сцены под интерес ребёнка и уровень языка.</div>
+        </div>
+        <div class="btn-row"><button onclick="go('world')">Вернуться к дням</button></div>
+      </div>
+    </section>
+
+    <section class="screen" id="future">
+      <div class="card">
+        <h2>Будущая линия: голос, 2D и 3D</h2>
+        <p>Эта страница нужна, чтобы не забыть стратегию развития: сначала простой урок, потом голосовой диалог, потом интерактивная реальность.</p>
+        <div class="roadmap">
+          <div class="road"><b>Уровень 1.</b> Ребёнок выбирает ответы, слушает слова, повторяет тоны.</div>
+          <div class="road"><b>Уровень 2.</b> Появляется кнопка записи: ребёнок зажимает кнопку и говорит короткую фразу.</div>
+          <div class="road"><b>Уровень 3.</b> Друг отвечает голосом, ИИ исправляет ошибки мягко и по-детски.</div>
+          <div class="road"><b>Уровень 4.</b> 2D-мир: герой ходит по футбольному полю, школе магии или экспедиции.</div>
+          <div class="road"><b>Уровень 5.</b> 3D-мир: ребёнок входит в выбранную реальность, а напарник ведёт с ним диалог.</div>
+        </div>
+        <div class="btn-row"><button onclick="go('world')">Назад</button></div>
+      </div>
+    </section>
+
+    <div class="footer">
+      MVP v4: для теста 10 дней. Настоящий ИИ подключается через backend, не через открытый ключ в браузере.
+    </div>
   </div>
 
-  <script>
-    const $ = (sel) => document.querySelector(sel);
-    const storageKey = "chineseQuestMvp.v3";
+<script>
+const storageKey = "chineseQuestMvp.v4";
+let state = {
+  profile:null,
+  currentDay:1,
+  completedDays:[],
+  dayData:{}
+};
 
-    const roles = {
-      footballer: {
-        title: "Футболист", emoji: "⚽",
-        short: "Тренировки, команда, матч и китайские футбольные друзья.",
-        place: "детскую футбольную академию в Китае",
-        mission: "попасть на первую тренировку",
-        friend: "小明", friendName: "Сяо Мин",
-        intro: "Тренер ждёт на поле. Чтобы выйти к команде, нужно поздороваться по-китайски.",
-        reward: "первую форму команды",
-        nodes: ["Ворота академии", "Первая тренировка", "Командный мяч", "Матч дружбы"],
-        sampleWords: ["мяч", "тренер", "команда", "гол"]
-      },
-      mage: {
-        title: "Маг", emoji: "🪄",
-        short: "Школа магии, заклинания, артефакты и драконьи ворота.",
-        place: "школу дракона",
-        mission: "открыть магические ворота",
-        friend: "小美", friendName: "Сяо Мэй",
-        intro: "У ворот школы горит знак 你好. Чтобы открыть ворота, нужно понять первое слово.",
-        reward: "амулет первого слова",
-        nodes: ["Ворота школы", "Зал заклинаний", "Башня иероглифов", "Драконья библиотека"],
-        sampleWords: ["магия", "книга", "дракон", "кристалл"]
-      },
-      archaeologist: {
-        title: "Археолог", emoji: "🧭",
-        short: "Карты, находки, древние города, экспедиции и тайные надписи.",
-        place: "первую археологическую экспедицию",
-        mission: "расшифровать знак на древнем сундуке",
-        friend: "小安", friendName: "Сяо Ань",
-        intro: "На древнем сундуке написано 你好. Друг из Китая помогает понять надпись.",
-        reward: "древнюю карту маршрута",
-        nodes: ["Лагерь экспедиции", "Древний сундук", "Карта Китая", "Путь в Египет"],
-        sampleWords: ["карта", "храм", "сундук", "находка"]
-      }
-    };
+const heroMap = {
+  football:{name:"футболист", place:"китайская футбольная академия", goal:"попасть в команду и сыграть первый матч", skill:"футбольный навык"},
+  magic:{name:"маг", place:"школа дракона", goal:"открыть ворота магической школы", skill:"магический навык"},
+  archaeology:{name:"археолог", place:"лагерь экспедиции", goal:"найти древнюю карту и расшифровать знаки", skill:"навык исследователя"},
+  robot:{name:"робот", place:"город умных машин", goal:"научиться понимать людей и команды", skill:"навык понимания"},
+  cosmos:{name:"космонавт", place:"китайская космическая станция", goal:"стать частью экипажа", skill:"космический навык"}
+};
+const companionMap = {panda:"панда", dragon:"дракон", robot:"робот", phoenix:"феникс", compass:"говорящий компас"};
 
-    const companions = {
-      panda: { title: "Панда", emoji: "🐼", line: "Я буду мягко подсказывать и хвалить за попытки." },
-      dragon: { title: "Дракон", emoji: "🐉", line: "Я охраняю ворота новых уровней и помогаю не сдаваться." },
-      robot: { title: "Робот", emoji: "🤖", line: "Я считаю прогресс, ошибки и включаю режим повторения." }
-    };
+const toneRows = [
+  { tone:"1-й", sound:"ровно и высоко", example:"mā", hint:"«ма-а» ровно" },
+  { tone:"2-й", sound:"вверх, как вопрос", example:"má", hint:"«ма?»" },
+  { tone:"3-й", sound:"вниз-вверх", example:"mǎ", hint:"«ма-а?» с провалом" },
+  { tone:"4-й", sound:"резко вниз", example:"mà", hint:"«ма!» резко" },
+  { tone:"лёгкий", sound:"коротко, слабо", example:"ma", hint:"очень коротко" }
+];
 
-    const words = [
-      {
-        hanzi: "你好",
-        pinyin: "nǐ hǎo",
-        ru: "привет",
-        tip: "Используется при встрече. Буквально: ты + хороший.",
-        syllables: [
-          { py: "nǐ", tone: "3-й тон", how: "вниз-вверх: «ни-а?» с маленьким провалом", note: "В 你好 перед вторым 3-м тоном часто звучит ближе ко 2-му: ní hǎo. Это нормально." },
-          { py: "hǎo", tone: "3-й тон", how: "вниз-вверх: «хао-а?» с провалом", note: "Главное — не сказать ровно, нужен провал вниз и подъём." }
-        ],
-        voiceHint: "Примерно: «ни↗ хао↘↗». Для старта: мягко подними голос на первом слоге и сделай провал на втором."
-      },
-      {
-        hanzi: "我",
-        pinyin: "wǒ",
-        ru: "я",
-        tip: "Слово для рассказа о себе.",
-        syllables: [
-          { py: "wǒ", tone: "3-й тон", how: "вниз-вверх: «во-а?» с провалом", note: "Голос сначала опускается, потом поднимается." }
-        ],
-        voiceHint: "Примерно: «во↘↗». Не коротко и резко, а с маленькой волной."
-      },
-      {
-        hanzi: "你",
-        pinyin: "nǐ",
-        ru: "ты",
-        tip: "Обращение к другу или собеседнику.",
-        syllables: [
-          { py: "nǐ", tone: "3-й тон", how: "вниз-вверх: «ни-а?» с провалом", note: "Если после него идёт ещё 3-й тон, первый слог может звучать как 2-й." }
-        ],
-        voiceHint: "Примерно: «ни↘↗». Голос делает маленькую ямку."
-      },
-      {
-        hanzi: "朋友",
-        pinyin: "péngyou",
-        ru: "друг",
-        tip: "В квесте друзья помогают двигаться дальше.",
-        syllables: [
-          { py: "péng", tone: "2-й тон", how: "вверх, как вопрос: «пэн?»", note: "Голос поднимается." },
-          { py: "you", tone: "лёгкий тон", how: "коротко и слабо: «йоу»", note: "Без сильного ударения." }
-        ],
-        voiceHint: "Примерно: «пэн↗ йоу(коротко)»."
-      },
-      {
-        hanzi: "谢谢",
-        pinyin: "xièxie",
-        ru: "спасибо",
-        tip: "Вежливое слово после помощи.",
-        syllables: [
-          { py: "xiè", tone: "4-й тон", how: "резко вниз: «сье!»", note: "Голос быстро падает сверху вниз." },
-          { py: "xie", tone: "лёгкий тон", how: "очень коротко и слабо: «се»", note: "Второй слог не надо сильно выделять." }
-        ],
-        voiceHint: "Примерно: «сье! се(коротко)»."
-      }
-    ];
+const baseDays = [
+  {theme:"Знакомство", words:[
+    {hanzi:"你好",pinyin:"nǐ hǎo",ru:"привет",tone:"nǐ — 3-й тон, hǎo — 3-й тон",hint:"вниз-вверх, как маленькая волна"},
+    {hanzi:"我",pinyin:"wǒ",ru:"я",tone:"3-й тон",hint:"голос вниз-вверх"},
+    {hanzi:"你",pinyin:"nǐ",ru:"ты",tone:"3-й тон",hint:"голос вниз-вверх"},
+    {hanzi:"朋友",pinyin:"péngyou",ru:"друг",tone:"péng — 2-й, you — лёгкий",hint:"пэн? + коротко йоу"},
+    {hanzi:"谢谢",pinyin:"xièxie",ru:"спасибо",tone:"xiè — 4-й, xie — лёгкий",hint:"сье! + коротко се"}
+  ]},
+  {theme:"Команда и числа", words:[
+    {hanzi:"一",pinyin:"yī",ru:"один",tone:"1-й тон",hint:"ровно высоко"},
+    {hanzi:"二",pinyin:"èr",ru:"два",tone:"4-й тон",hint:"резко вниз"},
+    {hanzi:"三",pinyin:"sān",ru:"три",tone:"1-й тон",hint:"ровно"},
+    {hanzi:"我们",pinyin:"wǒmen",ru:"мы",tone:"wǒ — 3-й, men — лёгкий",hint:"во-а + коротко мэн"},
+    {hanzi:"队",pinyin:"duì",ru:"команда",tone:"4-й тон",hint:"дуэй!"}
+  ]},
+  {theme:"Цвета", words:[
+    {hanzi:"红色",pinyin:"hóngsè",ru:"красный",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+    {hanzi:"蓝色",pinyin:"lánsè",ru:"синий",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+    {hanzi:"白色",pinyin:"báisè",ru:"белый",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+    {hanzi:"黑色",pinyin:"hēisè",ru:"чёрный",tone:"1-й + 4-й",hint:"ровно + резко вниз"},
+    {hanzi:"颜色",pinyin:"yánsè",ru:"цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"}
+  ]},
+  {theme:"Действия", words:[
+    {hanzi:"去",pinyin:"qù",ru:"идти",tone:"4-й тон",hint:"резко вниз"},
+    {hanzi:"看",pinyin:"kàn",ru:"смотреть",tone:"4-й тон",hint:"резко вниз"},
+    {hanzi:"跑",pinyin:"pǎo",ru:"бежать",tone:"3-й тон",hint:"вниз-вверх"},
+    {hanzi:"学",pinyin:"xué",ru:"учить",tone:"2-й тон",hint:"вверх, как вопрос"},
+    {hanzi:"说",pinyin:"shuō",ru:"говорить",tone:"1-й тон",hint:"ровно"}
+  ]},
+  {theme:"Еда и силы", words:[
+    {hanzi:"水",pinyin:"shuǐ",ru:"вода",tone:"3-й тон",hint:"вниз-вверх"},
+    {hanzi:"饭",pinyin:"fàn",ru:"еда/рис",tone:"4-й тон",hint:"резко вниз"},
+    {hanzi:"苹果",pinyin:"píngguǒ",ru:"яблоко",tone:"2-й + 3-й",hint:"вверх + вниз-вверх"},
+    {hanzi:"喝",pinyin:"hē",ru:"пить",tone:"1-й тон",hint:"ровно"},
+    {hanzi:"吃",pinyin:"chī",ru:"есть",tone:"1-й тон",hint:"ровно"}
+  ]},
+  {theme:"Вопросы", words:[
+    {hanzi:"谁",pinyin:"shéi",ru:"кто",tone:"2-й тон",hint:"вверх"},
+    {hanzi:"什么",pinyin:"shénme",ru:"что",tone:"2-й + лёгкий",hint:"вверх + коротко"},
+    {hanzi:"哪里",pinyin:"nǎli",ru:"где",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+    {hanzi:"吗",pinyin:"ma",ru:"вопросительная частица",tone:"лёгкий",hint:"коротко"},
+    {hanzi:"好",pinyin:"hǎo",ru:"хорошо",tone:"3-й тон",hint:"вниз-вверх"}
+  ]},
+  {theme:"Семья и рассказ о себе", words:[
+    {hanzi:"爸爸",pinyin:"bàba",ru:"папа",tone:"4-й + лёгкий",hint:"ба! + коротко"},
+    {hanzi:"妈妈",pinyin:"māma",ru:"мама",tone:"1-й + лёгкий",hint:"ровно + коротко"},
+    {hanzi:"家",pinyin:"jiā",ru:"дом/семья",tone:"1-й тон",hint:"ровно"},
+    {hanzi:"喜欢",pinyin:"xǐhuan",ru:"нравится",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+    {hanzi:"中文",pinyin:"Zhōngwén",ru:"китайский язык",tone:"1-й + 2-й",hint:"ровно + вверх"}
+  ]},
+  {theme:"Предметы мира", words:[
+    {hanzi:"球",pinyin:"qiú",ru:"мяч/шар",tone:"2-й тон",hint:"вверх"},
+    {hanzi:"书",pinyin:"shū",ru:"книга",tone:"1-й тон",hint:"ровно"},
+    {hanzi:"地图",pinyin:"dìtú",ru:"карта",tone:"4-й + 2-й",hint:"резко вниз + вверх"},
+    {hanzi:"门",pinyin:"mén",ru:"дверь/ворота",tone:"2-й тон",hint:"вверх"},
+    {hanzi:"钥匙",pinyin:"yàoshi",ru:"ключ",tone:"4-й + лёгкий",hint:"резко вниз + коротко"}
+  ]},
+  {theme:"Мини-диалог", words:[
+    {hanzi:"我是",pinyin:"wǒ shì",ru:"я являюсь / я —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+    {hanzi:"你是",pinyin:"nǐ shì",ru:"ты являешься / ты —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+    {hanzi:"很好",pinyin:"hěn hǎo",ru:"очень хорошо",tone:"3-й + 3-й",hint:"первый часто звучит как 2-й"},
+    {hanzi:"再见",pinyin:"zàijiàn",ru:"пока",tone:"4-й + 4-й",hint:"два резких падения"},
+    {hanzi:"明天",pinyin:"míngtiān",ru:"завтра",tone:"2-й + 1-й",hint:"вверх + ровно"}
+  ]},
+  {theme:"Первое испытание", words:[
+    {hanzi:"开始",pinyin:"kāishǐ",ru:"начать",tone:"1-й + 3-й",hint:"ровно + вниз-вверх"},
+    {hanzi:"成功",pinyin:"chénggōng",ru:"успех",tone:"2-й + 1-й",hint:"вверх + ровно"},
+    {hanzi:"加油",pinyin:"jiāyóu",ru:"давай! вперёд!",tone:"1-й + 2-й",hint:"ровно + вверх"},
+    {hanzi:"今天",pinyin:"jīntiān",ru:"сегодня",tone:"1-й + 1-й",hint:"ровно"},
+    {hanzi:"明白",pinyin:"míngbai",ru:"понятно",tone:"2-й + лёгкий",hint:"вверх + коротко"}
+  ]}
+];
 
-    const toneRows = [
-      { tone: "1-й", sound: "ровно и высоко", example: "mā", hint: "«ма-а» ровно" },
-      { tone: "2-й", sound: "вверх, как вопрос", example: "má", hint: "«ма?»" },
-      { tone: "3-й", sound: "вниз-вверх", example: "mǎ", hint: "«ма-а?» с провалом" },
-      { tone: "4-й", sound: "резко вниз", example: "mà", hint: "«ма!» резко" },
-      { tone: "лёгкий", sound: "коротко, слабо", example: "ma", hint: "очень коротко" }
-    ];
-
-    function toneGuideHtml() {
-      return `
-        <div class="tone-guide">
-          <div class="tone-row"><div>Тон</div><div>Как звучит</div><div>Пример</div><div>Русская подсказка</div></div>
-          ${toneRows.map(r => `
-            <div class="tone-row">
-              <div><span class="tone-badge">${h(r.tone)}</span></div>
-              <div>${h(r.sound)}</div>
-              <div><b>${h(r.example)}</b></div>
-              <div>${h(r.hint)}</div>
-            </div>
-          `).join('')}
+function h(x){return String(x??"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
+function go(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);}
+function toggleCustom(type){
+  const sel=document.getElementById(type+"Select");
+  const box=document.getElementById(type+"CustomBox");
+  box.style.display=sel.value==="custom"?"block":"none";
+}
+function getHero(){
+  const value=document.getElementById("heroSelect").value;
+  if(value==="custom"){
+    const custom=document.getElementById("heroCustom").value.trim();
+    return {key:"custom",name:custom||"свой герой",place:"личный мир героя",goal:"пройти своё первое испытание",skill:"личный навык"};
+  }
+  return {key:value,...heroMap[value]};
+}
+function getCompanion(){
+  const value=document.getElementById("companionSelect").value;
+  if(value==="custom"){
+    return document.getElementById("companionCustom").value.trim() || "свой напарник";
+  }
+  return companionMap[value];
+}
+function saveProfile(){
+  const child=document.getElementById("childName").value.trim();
+  const parent=document.getElementById("parentName").value.trim();
+  const hero=getHero();
+  const companion=getCompanion();
+  if(!child){document.getElementById("profileError").textContent="Введите имя ребёнка.";return;}
+  if(hero.key==="custom" && !document.getElementById("heroCustom").value.trim()){document.getElementById("profileError").textContent="Напишите своего героя.";return;}
+  state.profile={child,parent,hero,companion,interest:document.getElementById("heroInterest").value.trim(),aiUrl:document.getElementById("aiUrl").value.trim()};
+  state.currentDay=1; state.completedDays=[]; state.dayData={};
+  localStorage.setItem(storageKey,JSON.stringify(state));
+  renderWorld();
+  go("world");
+}
+function loadSaved(){
+  const saved=localStorage.getItem(storageKey);
+  if(!saved){go("profile");return;}
+  state=JSON.parse(saved);
+  renderWorld(); go("world");
+}
+function save(){localStorage.setItem(storageKey,JSON.stringify(state));}
+function resetAll(){if(confirm("Сбросить прохождение MVP v4?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
+function speak(text){
+  if(!("speechSynthesis" in window)){alert("Браузер не поддерживает озвучку.");return;}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang="zh-CN"; u.rate=.78; speechSynthesis.speak(u);
+}
+function roleSentence(day){
+  const p=state.profile, h=p.hero.name, c=p.companion;
+  const variants=[
+    `Сегодня ${p.child} как ${h} впервые встречает китайского друга, а ${c} помогает сказать 你好.`,
+    `На 2-й день ${c} напоминает: без слов прошлого дня нельзя попасть дальше. ${h} готовится к новой мини-миссии.`,
+    `Мир уже запомнил выбор: ${p.child} — ${h}. Новая задача связана с цветами и предметами его роли.`,
+    `${c} зовёт героя двигаться дальше. Чтобы сделать действие в мире, нужно понять китайские глаголы.`,
+    `У героя появляются силы: вода, еда и короткий разговор с другом.`,
+    `Друг начинает задавать вопросы. Теперь важно не только помнить слова, но и понимать вопрос.`,
+    `Ребёнок рассказывает о себе и семье. Родительская линия усиливается: китайский становится семейной привычкой.`,
+    `В мире появляются предметы: ключ, ворота, карта, мяч или книга — всё зависит от роли героя.`,
+    `Появляется первый настоящий мини-диалог. ${c} помогает отвечать не кнопкой, а фразой.`,
+    `Первое испытание: герой доказывает, что готов продолжать 10-дневный путь.`
+  ];
+  return variants[day-1] || variants[0];
+}
+function generatedMission(day){
+  const p=state.profile, h=p.hero.name, place=p.hero.place, goal=p.hero.goal, c=p.companion;
+  if(p.hero.key==="football") return [
+    "войти на тренировочное поле",
+    "посчитать игроков команды",
+    "выбрать цвет формы",
+    "добежать до ворот",
+    "выпить воду после тренировки",
+    "ответить тренеру на вопрос",
+    "рассказать другу о семье",
+    "найти ключ от раздевалки",
+    "позвать друга на тренировку",
+    "сыграть первое учебное испытание"
+  ][day-1];
+  if(p.hero.key==="magic") return [
+    "открыть ворота школы дракона",
+    "посчитать магические печати",
+    "выбрать цвет кристалла",
+    "произнести действие-заклинание",
+    "найти воду и еду для силы",
+    "ответить хранителю на вопрос",
+    "рассказать другу о семье",
+    "найти ключ от башни",
+    "сказать первую магическую фразу",
+    "пройти испытание дракона"
+  ][day-1];
+  if(p.hero.key==="archaeology") return [
+    "познакомиться в лагере экспедиции",
+    "посчитать древние камни",
+    "выбрать цвет отметок на карте",
+    "пойти к месту раскопок",
+    "собрать припасы",
+    "ответить на вопрос друга",
+    "рассказать о себе в дневнике",
+    "найти ключ и карту",
+    "сказать первую фразу в экспедиции",
+    "открыть первый древний сундук"
+  ][day-1];
+  return `${h} в локации “${place}”: ${goal}. ${c} помогает пройти задание дня ${day}.`;
+}
+function getDayData(day){
+  if(state.dayData[day]) return state.dayData[day];
+  const base=baseDays[day-1];
+  const p=state.profile;
+  const data={
+    day, theme:base.theme, words:base.words,
+    scene:roleSentence(day),
+    mission:generatedMission(day),
+    friend: day<4 ? "小明 / Xiǎo Míng" : day<7 ? "小美 / Xiǎo Měi" : "老师 / Lǎoshī",
+    dialogue:[
+      {who:p.companion, cls:"companion", text:`${p.child}, я помню твой путь: ты выбрал роль “${p.hero.name}”. Сегодня мир не начнётся без языкового пароля.`},
+      {who:"Китайский друг", cls:"friend", text:`你好! Сегодня тема: ${base.theme}. Скажи или выбери правильные слова, и мы продолжим миссию.`},
+      {who:"Миссия", cls:"", text:generatedMission(day)}
+    ],
+    quiz:[
+      {q:`День ${day}. Как переводится ${base.words[0].hanzi}?`, options:[base.words[0].ru, base.words[1].ru, "пока"], answer:base.words[0].ru},
+      {q:`Как читается ${base.words[1].hanzi}?`, options:[base.words[1].pinyin, base.words[2].pinyin, "nǐ hǎo"], answer:base.words[1].pinyin},
+      {q:`Что нужно сделать, чтобы сюжет продолжился?`, options:["пройти языковой пароль","пропустить урок","закрыть приложение"], answer:"пройти языковой пароль"}
+    ],
+    selected:{}
+  };
+  state.dayData[day]=data; save(); return data;
+}
+async function tryAiDay(day){
+  const p=state.profile;
+  if(!p.aiUrl){alert("AI backend URL не указан. Демо работает локально.");return;}
+  const btn=document.getElementById("aiBtn");
+  btn.disabled=true; btn.textContent="ИИ генерирует день...";
+  try{
+    const resp=await fetch(p.aiUrl.replace(/\/$/,"")+"/api/generate-day",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        day,
+        childName:p.child,
+        hero:p.hero.name,
+        companion:p.companion,
+        interest:p.interest,
+        previousWords:day>1 ? getDayData(day-1).words.map(w=>w.hanzi+" "+w.pinyin+" "+w.ru) : []
+      })
+    });
+    if(!resp.ok) throw new Error("HTTP "+resp.status);
+    const data=await resp.json();
+    state.dayData[day]={...getDayData(day),...data, aiGenerated:true};
+    save(); renderWorld();
+  }catch(e){
+    alert("Не получилось получить день от ИИ: "+e.message+". Оставляем локальное демо.");
+  }finally{
+    btn.disabled=false; btn.textContent="Сгенерировать этот день через ИИ";
+  }
+}
+function renderWorld(){
+  if(!state.profile){go("profile");return;}
+  const p=state.profile;
+  document.getElementById("worldTitle").textContent=`${p.child}: путь “${p.hero.name}”`;
+  document.getElementById("worldSub").textContent=`Локация: ${p.hero.place}. Напарник: ${p.companion}. Цель: ${p.hero.goal}.`;
+  document.getElementById("profileChips").innerHTML=[
+    `Роль: ${p.hero.name}`,`Напарник: ${p.companion}`,`Навык: ${p.hero.skill}`,p.interest?`Интерес: ${p.interest}`:"интерес не указан"
+  ].map(x=>`<span class="chip">${h(x)}</span>`).join("");
+  const pct=Math.round((state.completedDays.length/10)*100);
+  document.getElementById("progressBar").style.width=pct+"%";
+  renderTimeline(); renderDay(state.currentDay); renderParent();
+}
+function renderTimeline(){
+  const maxOpen=Math.min(10, Math.max(1, state.completedDays.length+1));
+  document.getElementById("timeline").innerHTML=Array.from({length:10},(_,i)=>{
+    const d=i+1, done=state.completedDays.includes(d), active=state.currentDay===d, locked=d>maxOpen;
+    return `<div class="day ${done?'done':''} ${active?'active':''} ${locked?'locked':''}" onclick="${locked?'':'openDay('+d+')'}">День<br>${d}</div>`;
+  }).join("");
+}
+function openDay(day){state.currentDay=day;save();renderWorld();}
+function toneGuideHtml(){
+  return `<div class="tone-guide"><div class="tone-row"><div>Тон</div><div>Как звучит</div><div>Пример</div><div>Подсказка</div></div>${toneRows.map(r=>`<div class="tone-row"><div><b>${h(r.tone)}</b></div><div>${h(r.sound)}</div><div>${h(r.example)}</div><div>${h(r.hint)}</div></div>`).join("")}</div>`;
+}
+function renderDay(day){
+  const data=getDayData(day), p=state.profile;
+  const done=state.completedDays.includes(day);
+  document.getElementById("dayContent").innerHTML=`
+    <div class="lesson">
+      <div>
+        <h2>День ${day}: ${h(data.theme)} ${data.aiGenerated?'<span class="pill">ИИ</span>':''}</h2>
+        <p><span class="strong">Сцена:</span> ${h(data.scene)}</p>
+        <p><span class="strong">Миссия:</span> ${h(data.mission)}</p>
+        <div class="dialogue">
+          ${data.dialogue.map(b=>`<div class="bubble ${h(b.cls)}"><b>${h(b.who)}</b>${h(b.text)}</div>`).join("")}
         </div>
-      `;
-    }
-
-    function wordToneHtml(word) {
-      return `
-        <div class="pronounce">
-          <div class="pronounce-title">Как произносить по тонам</div>
-          <div class="syllables">
-            ${word.syllables.map(s => `
-              <div class="syllable">
-                <b>${h(s.py)} · ${h(s.tone)}</b>
-                <span>${h(s.how)}. ${h(s.note)}</span>
+        <div class="btn-row">
+          <button class="secondary" onclick="speak('${data.words[0].hanzi}')">▶ Послушать первое слово</button>
+          <button class="blue" id="aiBtn" onclick="tryAiDay(${day})">Сгенерировать этот день через ИИ</button>
+          <button class="secondary" onclick="go('future')">Показать будущий голос/2D/3D</button>
+        </div>
+        <h3>Памятка тонов</h3>
+        ${toneGuideHtml()}
+      </div>
+      <div>
+        <h3>Слова дня</h3>
+        <div class="word-list">
+          ${data.words.map(w=>`<div class="word"><div class="hanzi">${h(w.hanzi)}</div><div class="pinyin">${h(w.pinyin)} — ${h(w.ru)}</div><div class="pronounce"><div class="syllable"><b>Тон:</b> ${h(w.tone)}</div><div class="small">${h(w.hint)}</div></div><button class="secondary" style="margin-top:10px;padding:9px 12px" onclick="speak('${w.hanzi}')">слушать</button></div>`).join("")}
+        </div>
+        <h3>Языковой пароль</h3>
+        <div class="quiz">
+          ${data.quiz.map((q,idx)=>`
+            <div class="word">
+              <b>${h(q.q)}</b>
+              <div class="btn-row">
+                ${q.options.map(o=>`<button class="option ${data.selected[idx]===o?'selected':''}" onclick="selectAnswer(${day},${idx},'${h(o)}')">${h(o)}</button>`).join("")}
               </div>
-            `).join('')}
-          </div>
-          <div class="voice-hint">${h(word.voiceHint)}</div>
-        </div>
-      `;
-    }
-
-    const quiz = [
-      { q: "Как по-китайски сказать «привет»?", options: ["你好", "朋友", "谢谢"], answer: "你好" },
-      { q: "Что значит 我?", options: ["ты", "я", "друг"], answer: "я" },
-      { q: "Что значит 朋友?", options: ["друг", "спасибо", "ворота"], answer: "друг" },
-      { q: "Как читается 你好?", options: ["nǐ hǎo", "wǒ", "xièxie"], answer: "nǐ hǎo" },
-      { q: "Какой тон у слога xiè в 谢谢?", options: ["4-й: резко вниз", "1-й: ровно", "3-й: вниз-вверх"], answer: "4-й: резко вниз" },
-      { q: "Какое слово лучше сказать, когда друг помог?", options: ["谢谢", "你", "朋友"], answer: "谢谢" }
-    ];
-
-    const defaultState = {
-      screen: "welcome",
-      childName: "",
-      parentName: "",
-      role: "",
-      customRole: "",
-      customRoleNote: "",
-      companion: "",
-      customCompanion: "",
-      lessonViewed: false,
-      quizIndex: 0,
-      correct: 0,
-      mistakes: [],
-      parentExample: false,
-      completed: false,
-      lastVisit: null
-    };
-
-    let state = loadState();
-
-    function h(value) {
-      return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
-    }
-
-    function cleanText(value, fallback) {
-      const text = String(value || '').trim().replace(/\s+/g, ' ');
-      return text ? text.slice(0, 42) : fallback;
-    }
-
-    function pickEmoji(text, fallback = "✨") {
-      const t = String(text || '').toLowerCase();
-      if (t.includes('фут') || t.includes('мяч') || t.includes('гол')) return '⚽';
-      if (t.includes('маг') || t.includes('волш') || t.includes('чарод')) return '🪄';
-      if (t.includes('архе') || t.includes('искател') || t.includes('раскоп')) return '🧭';
-      if (t.includes('робот') || t.includes('кибер')) return '🤖';
-      if (t.includes('косм') || t.includes('ракета')) return '🚀';
-      if (t.includes('дракон')) return '🐉';
-      if (t.includes('врач')) return '🩺';
-      if (t.includes('музык') || t.includes('пев')) return '🎵';
-      if (t.includes('худож') || t.includes('рис')) return '🎨';
-      if (t.includes('гон') || t.includes('машин')) return '🏎️';
-      return fallback;
-    }
-
-    function generateCustomRole() {
-      const title = cleanText(state.customRole, 'Свой герой');
-      const note = cleanText(state.customRoleNote, 'интерес ребёнка');
-      const emoji = pickEmoji(title, '✨');
-      return {
-        title, emoji,
-        short: `ИИ строит обучение вокруг темы: ${title}.`,
-        place: `мир «${title}»`,
-        mission: `сделать первый шаг в роли «${title}»`,
-        friend: "小乐", friendName: "Сяо Лэ",
-        intro: `ИИ-наставник создаёт стартовую сцену по теме «${title}»: ${note}. Чтобы мир начал двигаться, нужно понять слово 你好.`,
-        reward: `первый знак пути «${title}»`,
-        nodes: [`Начало пути`, `Первый друг`, `Тематическое задание`, `Новая локация`],
-        sampleWords: [`слова по теме «${title}»`, `предметы`, `действия`, `диалоги`],
-        isCustom: true
-      };
-    }
-
-    function generateCustomCompanion() {
-      const title = cleanText(state.customCompanion, 'Свой напарник');
-      const emoji = pickEmoji(title, '🧩');
-      return {
-        title, emoji,
-        line: `ИИ создаёт характер напарника «${title}»: он поддерживает ребёнка, напоминает прошлый урок и помогает проходить языковой пароль.`,
-        isCustom: true
-      };
-    }
-
-    function currentRole() {
-      return state.role === 'custom' ? generateCustomRole() : roles[state.role];
-    }
-
-    function currentCompanion() {
-      return state.companion === 'custom' ? generateCustomCompanion() : companions[state.companion];
-    }
-
-    function loadState() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(storageKey));
-        return { ...defaultState, ...(saved || {}) };
-      } catch (_) { return { ...defaultState }; }
-    }
-
-    function saveState(patch = {}) {
-      state = { ...state, ...patch, lastVisit: new Date().toISOString() };
-      localStorage.setItem(storageKey, JSON.stringify(state));
-      render();
-    }
-
-    function resetDemo() {
-      localStorage.removeItem(storageKey);
-      state = { ...defaultState };
-      render();
-    }
-
-    function speak(text) {
-      if (!('speechSynthesis' in window)) return alert('Озвучка не поддерживается этим браузером.');
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'zh-CN';
-      u.rate = 0.82;
-      speechSynthesis.speak(u);
-    }
-
-    function progressPercent() {
-      if (state.completed) return 100;
-      const base = state.childName ? 15 : 0;
-      const role = state.role ? 15 : 0;
-      const comp = state.companion ? 15 : 0;
-      const lesson = state.lessonViewed ? 25 : 0;
-      const quizPart = Math.round((state.quizIndex / quiz.length) * 30);
-      return Math.min(100, base + role + comp + lesson + quizPart);
-    }
-
-    function side() {
-      const role = currentRole();
-      const companion = currentCompanion();
-      return `
-        <div class="metric">
-          <span>Прогресс первого дня</span>
-          <b>${progressPercent()}%</b>
-          <div class="progress"><div style="width:${progressPercent()}%"></div></div>
-        </div>
-        <div class="metric">
-          <span>Герой</span>
-          <b>${role ? h(role.emoji + ' ' + role.title) : 'не выбран'}</b>
-          ${role?.isCustom ? '<span>Свой вариант: в полной версии его будет раскрывать ИИ.</span>' : ''}
-        </div>
-        <div class="metric">
-          <span>Напарник</span>
-          <b>${companion ? h(companion.emoji + ' ' + companion.title) : 'не выбран'}</b>
-          ${companion?.isCustom ? '<span>Свой напарник: характер и реплики генерирует ИИ.</span>' : ''}
-        </div>
-        <div class="metric">
-          <span>ИИ-наставник</span>
-          <b>демо-режим</b>
-          <span>Сейчас мир создаётся шаблоном. После первых тестов подключим настоящий ИИ.</span>
-        </div>
-        <div class="metric">
-          <span>Родительская линия</span>
-          <b>${state.parentExample ? 'пример показан' : 'ждёт участия'}</b>
-          <span>Родитель помогает держать ритм и подтверждает ценность китайского.</span>
-        </div>
-      `;
-    }
-
-    function updatePill() {
-      const role = currentRole();
-      $('#profilePill').textContent = state.childName
-        ? `${state.childName}${role ? ' · ' + role.title : ''}`
-        : 'Гость';
-    }
-
-    function welcome() {
-      return `
-        <div>
-          <span class="pill">Для инвесторского демо</span>
-          <h1>Китайский язык через <span class="accent">живой квест</span></h1>
-          <p>Ребёнок выбирает готового героя или придумывает своего. Если героя нет в списке, родитель с ребёнком вводят вариант, а будущий ИИ создаёт мир, задания и друзей под этот интерес.</p>
-          <div class="stepper">
-            <div class="step"><div class="step-num">1</div><div><b>Родитель задаёт цель</b><br><span class="small">Китайский как второй стратегический язык для будущих диалогов, партнёрства и культуры.</span></div></div>
-            <div class="step"><div class="step-num">2</div><div><b>Ребёнок выбирает путь</b><br><span class="small">Готовый список или свой герой: футболист, маг, археолог, гонщик, художник, кто угодно.</span></div></div>
-            <div class="step"><div class="step-num">3</div><div><b>Язык двигает мир</b><br><span class="small">Чтобы продолжить историю, нужно пройти языковой пароль.</span></div></div>
-          </div>
-        </div>
-        <div>
-          <label>Имя ребёнка</label>
-          <input id="childName" placeholder="Например: Дима" value="${h(state.childName)}" />
-          <label>Имя родителя</label>
-          <input id="parentName" placeholder="Например: папа Дмитрий" value="${h(state.parentName)}" />
-          <div class="btn-row">
-            <button class="gold" onclick="startRegistration()">Начать первый день</button>
-            <button class="secondary" onclick="saveState({screen:'parent'})">Посмотреть роль родителя</button>
-          </div>
-          <div class="footer-note">Данные демо сохраняются только в браузере на этом устройстве.</div>
-        </div>
-      `;
-    }
-
-    window.startRegistration = function() {
-      const childName = $('#childName').value.trim() || 'Юный герой';
-      const parentName = $('#parentName').value.trim() || 'Родитель';
-      saveState({ childName, parentName, screen: 'chooseRole' });
-    };
-
-    function roleOptionsHtml() {
-      return `
-        <option value="">Выбрать из списка</option>
-        ${Object.entries(roles).map(([id, r]) => `<option value="${id}" ${state.role === id ? 'selected' : ''}>${r.emoji} ${r.title}</option>`).join('')}
-        <option value="custom" ${state.role === 'custom' ? 'selected' : ''}>✍️ Нет в списке — написать своего героя</option>
-      `;
-    }
-
-    function companionOptionsHtml() {
-      return `
-        <option value="">Выбрать из списка</option>
-        ${Object.entries(companions).map(([id, c]) => `<option value="${id}" ${state.companion === id ? 'selected' : ''}>${c.emoji} ${c.title}</option>`).join('')}
-        <option value="custom" ${state.companion === 'custom' ? 'selected' : ''}>✍️ Нет в списке — написать своего напарника</option>
-      `;
-    }
-
-    function chooseRole() {
-      const role = currentRole();
-      return `
-        <div>
-          <span class="pill">Шаг 1 из 3</span>
-          <h2>${h(state.childName)}, выбери путь героя</h2>
-          <p>Это может быть готовый вариант или свой персонаж. В полной версии ИИ будет генерировать обучение, сюжет и лексику под выбранную тему.</p>
-          <label>Путь героя</label>
-          <select id="roleSelect" onchange="onRoleSelectChanged()">${roleOptionsHtml()}</select>
-          <div id="customRoleBlock" class="${state.role === 'custom' ? '' : 'hidden'}">
-            <label>Свой герой</label>
-            <input id="customRole" placeholder="Например: гонщик, художник, врач, исследователь динозавров" value="${h(state.customRole)}" />
-            <label>Что ребёнку интересно в этой теме?</label>
-            <textarea id="customRoleNote" placeholder="Например: любит машины, соревнования, скорость и кубки">${h(state.customRoleNote)}</textarea>
-            <div class="ai-box"><b>ИИ-логика будущей версии:</b><p>По этому описанию система создаст мир, первого друга, задания и тематические слова. Сейчас это показано как демо-генерация.</p></div>
-          </div>
-          <div class="choice-grid">
-            ${Object.entries(roles).map(([id, r]) => `
-              <div class="choice ${state.role === id ? 'selected' : ''}" onclick="quickRole('${id}')">
-                <div class="emoji">${r.emoji}</div>
-                <strong>${r.title}</strong>
-                <span>${r.short}</span>
-              </div>`).join('')}
-          </div>
-          ${role ? `<div class="ai-box"><b>Предпросмотр мира:</b><p>${h(role.emoji)} ${h(role.title)} попадёт в ${h(role.place)}. Первая цель — ${h(role.mission)}.</p></div>` : ''}
-          <div id="roleError" class="toast hidden"></div>
+            </div>`).join("")}
         </div>
         <div class="btn-row">
-          <button class="secondary" onclick="saveState({screen:'welcome'})">Назад</button>
-          <button class="gold" onclick="saveRoleAndNext()">Дальше: выбрать напарника</button>
+          <button class="good" onclick="finishDay(${day})">${done?'День уже пройден':'Завершить день'}</button>
+          <button class="secondary" onclick="go('parent')">Кабинет родителя</button>
         </div>
-      `;
-    }
-
-    window.onRoleSelectChanged = function() {
-      const val = $('#roleSelect').value;
-      if (val === 'custom') saveState({ role: 'custom' });
-      else saveState({ role: val, customRole: state.customRole, customRoleNote: state.customRoleNote });
-    };
-
-    window.quickRole = function(id) {
-      saveState({ role: id });
-    };
-
-    window.saveRoleAndNext = function() {
-      const roleVal = $('#roleSelect')?.value || state.role;
-      const patch = { role: roleVal };
-      if (roleVal === 'custom') {
-        const customRole = $('#customRole')?.value.trim() || '';
-        const customRoleNote = $('#customRoleNote')?.value.trim() || '';
-        if (!customRole) {
-          $('#roleError').textContent = 'Напиши своего героя, если его нет в списке.';
-          $('#roleError').classList.remove('hidden');
-          return;
-        }
-        patch.customRole = customRole;
-        patch.customRoleNote = customRoleNote;
-      }
-      if (!roleVal) {
-        $('#roleError').textContent = 'Выбери героя или напиши своего.';
-        $('#roleError').classList.remove('hidden');
-        return;
-      }
-      patch.screen = 'chooseCompanion';
-      saveState(patch);
-    };
-
-    function chooseCompanion() {
-      const companion = currentCompanion();
-      return `
-        <div>
-          <span class="pill">Шаг 2 из 3</span>
-          <h2>Выбери напарника</h2>
-          <p>Если нужного напарника нет, ребёнок с родителем пишет своего. В полной версии ИИ задаст ему характер, манеру речи и роль в обучении.</p>
-          <label>Напарник</label>
-          <select id="companionSelect" onchange="onCompanionSelectChanged()">${companionOptionsHtml()}</select>
-          <div id="customCompanionBlock" class="${state.companion === 'custom' ? '' : 'hidden'}">
-            <label>Свой напарник</label>
-            <input id="customCompanion" placeholder="Например: вихрь, феникс, говорящий мяч, компас, маленький динозавр" value="${h(state.customCompanion)}" />
-            <div class="ai-box"><b>ИИ-логика будущей версии:</b><p>Напарник будет помнить прошлые уроки, звать ребёнка обратно и помогать проходить языковой пароль.</p></div>
-          </div>
-          <div class="choice-grid">
-            ${Object.entries(companions).map(([id, c]) => `
-              <div class="choice ${state.companion === id ? 'selected' : ''}" onclick="quickCompanion('${id}')">
-                <div class="emoji">${c.emoji}</div>
-                <strong>${c.title}</strong>
-                <span>${c.line}</span>
-              </div>`).join('')}
-          </div>
-          ${companion ? `<div class="ai-box"><b>Предпросмотр напарника:</b><p>${h(companion.emoji)} ${h(companion.title)}: ${h(companion.line)}</p></div>` : ''}
-          <div id="companionError" class="toast hidden"></div>
-        </div>
-        <div class="btn-row">
-          <button class="secondary" onclick="saveState({screen:'chooseRole'})">Назад</button>
-          <button class="gold" onclick="saveCompanionAndNext()">Войти в мир</button>
-        </div>
-      `;
-    }
-
-    window.onCompanionSelectChanged = function() {
-      const val = $('#companionSelect').value;
-      if (val === 'custom') saveState({ companion: 'custom' });
-      else saveState({ companion: val });
-    };
-
-    window.quickCompanion = function(id) { saveState({ companion: id }); };
-
-    window.saveCompanionAndNext = function() {
-      const compVal = $('#companionSelect')?.value || state.companion;
-      const patch = { companion: compVal };
-      if (compVal === 'custom') {
-        const customCompanion = $('#customCompanion')?.value.trim() || '';
-        if (!customCompanion) {
-          $('#companionError').textContent = 'Напиши своего напарника, если его нет в списке.';
-          $('#companionError').classList.remove('hidden');
-          return;
-        }
-        patch.customCompanion = customCompanion;
-      }
-      if (!compVal) {
-        $('#companionError').textContent = 'Выбери напарника или напиши своего.';
-        $('#companionError').classList.remove('hidden');
-        return;
-      }
-      patch.screen = 'story';
-      saveState(patch);
-    };
-
-    function story() {
-      const role = currentRole();
-      const companion = currentCompanion();
-      return `
-        <div>
-          <span class="pill">Шаг 3 из 3 · первый сюжет</span>
-          <h2>${h(role.emoji)} ${h(role.title)}: вход в ${h(role.place)}</h2>
-          <p>${h(role.intro)}</p>
-          <div class="dialogue">
-            <div class="bubble npc"><div class="speaker">${h(companion.emoji)} ${h(companion.title)}</div>${h(state.childName)}, я рядом. Сегодня мы выучим первое слово и откроем путь дальше.</div>
-            <div class="bubble npc"><div class="speaker">${h(role.friend)} · ${h(role.friendName)}</div>你好! Я твой новый китайский друг. Чтобы мы стали друзьями, узнай, что значит 你好.</div>
-            <div class="bubble user"><div class="speaker">${h(state.childName)}</div>Я готов пройти языковой пароль.</div>
-          </div>
-          <div class="story-map">
-            ${role.nodes.map((n, i) => `<div class="map-node ${i === 0 ? 'open' : ''}">${i === 0 ? '✅ ' : '🔒 '}${h(n)}</div>`).join('')}
-          </div>
-          <div class="ai-box"><b>Что будет делать настоящий ИИ:</b><p>После тестов он будет генерировать следующие сцены под выбранную роль “${h(role.title)}”, но не будет менять учебный каркас: слова, тоны и проверка останутся под контролем программы.</p></div>
-        </div>
-        <div class="btn-row">
-          <button class="secondary" onclick="saveState({screen:'chooseCompanion'})">Назад</button>
-          <button class="gold" onclick="saveState({screen:'lesson', lessonViewed:true})">Открыть урок 1</button>
-        </div>
-      `;
-    }
-
-    function lesson() {
-      const role = currentRole();
-      return `
-        <div>
-          <span class="pill">Урок 1 · Знакомство</span>
-          <h2>Первый языковой ключ</h2>
-          <p>Сегодня ребёнок учит 5 слов. Тематика героя уже влияет на сцену, а позже будет влиять на задания, диалоги и повторение.</p>
-          <div class="big-chinese">你好</div>
-          <div class="pinyin">nǐ hǎo — привет</div>
-          <div class="btn-row">
-            <button class="secondary" onclick="speak('你好')">▶ Послушать 你好</button>
-            <button class="secondary" onclick="speak('我是你的朋友')">▶ Послушать фразу</button>
-          </div>
-          <h3 style="margin-top:22px">Памятка тонов</h3>
-          <p>В китайском важно не только слово, но и движение голоса. Поэтому в каждой карточке ниже добавлена подсказка по тону.</p>
-          ${toneGuideHtml()}
-          <div class="word-list">
-            ${words.map(w => `
-              <div class="word">
-                <div class="hanzi">${h(w.hanzi)}</div>
-                <b>${h(w.pinyin)}</b>
-                <div class="translation">${h(w.ru)}</div>
-                <div class="small">${h(w.tip)}</div>
-                ${wordToneHtml(w)}
-                <button class="secondary" style="margin-top:10px;padding:9px 11px" onclick="speak('${w.hanzi}')">слушать</button>
-              </div>`).join('')}
-          </div>
-          <div class="ai-box">
-            <b>Пример будущей тематической лексики для роли “${h(role.title)}”:</b>
-            <p>${role.sampleWords.map(h).join(' · ')}</p>
-          </div>
-          <div class="parent-box">
-            <b>Задание для родителя:</b>
-            <p>Покажите пример: скажите ребёнку “你好” и спросите, что это значит. Ребёнок видит, что родитель тоже участвует.</p>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="secondary" onclick="saveState({screen:'story'})">Назад</button>
-          <button class="good" onclick="saveState({parentExample:true})">Родитель показал пример</button>
-          <button class="gold" onclick="saveState({screen:'quiz', quizIndex:0, correct:0, mistakes:[]})">Пройти языковой пароль</button>
-        </div>
-      `;
-    }
-
-    function escapeForJs(s) { return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
-
-    function quizScreen() {
-      const item = quiz[state.quizIndex];
-      if (!item) return resultScreen();
-      return `
-        <div>
-          <span class="pill">Языковой пароль ${state.quizIndex + 1}/${quiz.length}</span>
-          <h2>${h(item.q)}</h2>
-          <p>Ответ откроет движение сюжета. Ошибка не наказание — ИИ-наставник отправит слово на повторение.</p>
-          <div class="quiz-options">
-            ${item.options.map(opt => `<button onclick="answerQuiz('${escapeForJs(opt)}')">${h(opt)}</button>`).join('')}
-          </div>
-          <div class="footer-note">Правильных ответов сейчас: ${state.correct}</div>
-        </div>
-        <div class="btn-row">
-          <button class="secondary" onclick="saveState({screen:'lesson'})">Вернуться к словам</button>
-        </div>
-      `;
-    }
-
-    window.answerQuiz = function(answer) {
-      const item = quiz[state.quizIndex];
-      const isCorrect = answer === item.answer;
-      const mistakes = isCorrect ? state.mistakes : [...state.mistakes, { question: item.q, correct: item.answer, chosen: answer }];
-      const correct = state.correct + (isCorrect ? 1 : 0);
-      const next = state.quizIndex + 1;
-      if (next >= quiz.length) saveState({ correct, mistakes, quizIndex: next, screen: 'result', completed: correct >= 4 });
-      else saveState({ correct, mistakes, quizIndex: next });
-    };
-
-    function resultScreen() {
-      const role = currentRole();
-      const companion = currentCompanion();
-      const passed = state.correct >= 4;
-      return `
-        <div>
-          <span class="pill">Итог первого дня</span>
-          <h2>${passed ? 'Сюжет открыт!' : 'Нужно короткое повторение'}</h2>
-          <p>Результат: ${state.correct} из ${quiz.length}. ${passed ? `Герой получает ${h(role.reward)}, а следующий эпизод разблокирован.` : 'Напарник остановил мир и предлагает повторить слабые слова.'}</p>
-          <div class="dialogue">
-            <div class="bubble npc"><div class="speaker">${h(companion.emoji)} ${h(companion.title)}</div>${passed ? 'Отлично! Я запомню, что ты справился. Завтра я позову тебя обратно.' : 'Ошибаться нормально. Давай повторим и снова откроем ворота.'}</div>
-            <div class="bubble npc"><div class="speaker">${h(role.friend)} · ${h(role.friendName)}</div>${passed ? '你是我的朋友! Ты мой друг!' : 'Я подожду тебя здесь. Мир не убежит вперёд.'}</div>
-          </div>
-          ${state.mistakes.length ? `<div class="parent-box"><b>Слова на повторение:</b><p>${state.mistakes.map(m => h(m.correct)).join(', ')}</p></div>` : ''}
-          <div class="parent-box">
-            <b>Отчёт родителю:</b>
-            <p>Первый день: 5 слов, 1 сюжетная сцена, языковой пароль ${state.correct}/${quiz.length}. Недельные награды в будущем задаёт семья, а приложение показывает достижения.</p>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="secondary" onclick="saveState({screen:'lesson'})">Повторить урок</button>
-          <button class="gold" onclick="saveState({screen:'parent'})">Кабинет родителя</button>
-        </div>
-      `;
-    }
-
-    function parentScreen() {
-      const role = currentRole();
-      const companion = currentCompanion();
-      return `
-        <div>
-          <span class="pill">Родительский кабинет</span>
-          <h2>Проект идёт от родителей</h2>
-          <p>Главный покупатель и союзник — родитель, который понимает, что ребёнку нужен не только английский, но и китайский: язык будущих диалогов, торговли, партнёрства и культуры.</p>
-          <div class="stepper">
-            <div class="step"><div class="step-num">家</div><div><b>Семейная мотивация</b><br><span class="small">Родитель видит прогресс, помогает держать ритм и иногда сам повторяет слова.</span></div></div>
-            <div class="step"><div class="step-num">奖</div><div><b>Недельные достижения</b><br><span class="small">В приложении — звёзды, сундуки, уровни. Реальную награду семья выбирает сама.</span></div></div>
-            <div class="step"><div class="step-num">游</div><div><b>Будущие поездки</b><br><span class="small">Для лучших учеников можно развить систему скидок, путёвок, языковых лагерей и поездок.</span></div></div>
-          </div>
-          <div class="parent-box">
-            <b>Текущий профиль ребёнка:</b>
-            <p>${h(state.childName || 'Ребёнок')} · ${role ? h(role.title) : 'роль не выбрана'} · ${companion ? h(companion.title) : 'напарник не выбран'} · прогресс ${progressPercent()}%.</p>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="secondary" onclick="saveState({screen:'welcome'})">На главный экран</button>
-          <button class="gold" onclick="saveState({screen: state.role ? 'story' : 'chooseRole'})">Вернуться в квест</button>
-        </div>
-      `;
-    }
-
-    function render() {
-      updatePill();
-      $('#sideCard').innerHTML = side();
-      const main = $('#mainCard');
-      if (state.screen === 'welcome') main.innerHTML = welcome();
-      if (state.screen === 'chooseRole') main.innerHTML = chooseRole();
-      if (state.screen === 'chooseCompanion') main.innerHTML = chooseCompanion();
-      if (state.screen === 'story') main.innerHTML = story();
-      if (state.screen === 'lesson') main.innerHTML = lesson();
-      if (state.screen === 'quiz') main.innerHTML = quizScreen();
-      if (state.screen === 'result') main.innerHTML = resultScreen();
-      if (state.screen === 'parent') main.innerHTML = parentScreen();
-    }
-
-    $('#resetBtn').addEventListener('click', resetDemo);
-    render();
-  </script>
+        <div id="dayMsg"></div>
+      </div>
+    </div>`;
+}
+function selectAnswer(day,idx,opt){const data=getDayData(day);data.selected[idx]=opt;save();renderDay(day);}
+function finishDay(day){
+  const data=getDayData(day);
+  const all=data.quiz.every((q,idx)=>data.selected[idx]===q.answer);
+  const msg=document.getElementById("dayMsg");
+  if(!all){msg.innerHTML='<div class="toast">Не все ответы верные. Это нормально: мир не ругает, а просит повторить пароль.</div>';return;}
+  if(!state.completedDays.includes(day)) state.completedDays.push(day);
+  state.completedDays.sort((a,b)=>a-b);
+  state.currentDay=Math.min(10,day+1);
+  save(); renderWorld();
+}
+function renderParent(){
+  if(!state.profile)return;
+  const p=state.profile, done=state.completedDays.length;
+  document.getElementById("parentSummary").innerHTML=`
+    <div class="result">
+      <b>Прогресс:</b> ${done}/10 дней<br>
+      <b>Роль ребёнка:</b> ${h(p.hero.name)}<br>
+      <b>Напарник:</b> ${h(p.companion)}<br>
+      <b>Что уже доказано MVP:</b> ребёнок видит, что его выбор влияет на сюжет, слова и миссии.
+    </div>`;
+}
+</script>
 </body>
 </html>
