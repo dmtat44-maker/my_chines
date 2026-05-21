@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Китайский квест — MVP v7</title>
+  <title>Китайский квест — MVP v8</title>
   <style>
     :root {
       --bg:#f6f0e8; --card:#fffaf4; --ink:#172033; --muted:#667085;
@@ -46,7 +46,7 @@
       linear-gradient(135deg,rgba(211,59,48,.12),rgba(243,180,63,.16)),
       url("data:image/svg+xml,%3Csvg width='700' height='420' viewBox='0 0 700 420' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d33b30' stroke-opacity='.16'%3E%3Cpath d='M50 330 C180 230 210 390 350 270 S530 240 650 120' stroke-width='8'/%3E%3Ccircle cx='545' cy='112' r='78' stroke-width='10'/%3E%3Cpath d='M120 110h130M155 75v120M430 290h125M465 250v80' stroke-width='9' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") center/cover;
     }
-    .scene-title{position:absolute;left:22px;right:22px;bottom:22px;background:rgba(255,250,244,.87);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:22px;padding:16px}
+    .scene-title{position:absolute;left:22px;right:22px;top:22px;background:rgba(255,250,244,.87);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:22px;padding:16px}
     .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
     .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:white;color:var(--muted);font-weight:800;font-size:13px}
     .timeline{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin:16px 0}
@@ -94,26 +94,25 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v7</span></div></div>
-      <span class="pill">10 дней · фраза дня · проверка по смыслу</span>
+      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v8</span></div></div>
+      <span class="pill">10 дней · чистый старт · понятный урок</span>
     </header>
 
     <section class="screen active" id="start">
       <div class="hero">
         <div class="card">
-          <h1>Пройди 10 дней как ребёнок и родитель</h1>
-          <p><span class="strong">Цель MVP v7:</span> показать, что выбранная ребёнком роль не исчезает после первого урока, а становится линией истории на несколько дней.</p>
+          <h1>Пройди 10 дней и проверь, как работает путь ребёнка</h1>
+          <p><span class="strong">Цель MVP v8:</span> показать, что выбранная ребёнком роль не исчезает после первого урока, а становится линией истории на несколько дней.</p>
           <p>Сейчас это демо с локальной генерацией. Если подключить backend, следующие дни может генерировать ИИ.</p><p><b>Важно:</b> если после обновления видишь старые вопросы, нажми “Сбросить тест” — браузер мог сохранить старое прохождение.</p>
           <div class="btn-row">
             <button onclick="go('profile')">Начать заново</button>
             <button class="secondary" onclick="loadSaved()">Продолжить</button>
           </div>
-          <div class="warning" style="margin-top:16px">Для инвестора лучше сделать скриншоты 1-го, 2-го и 7-го дня: так видно, что у ребёнка есть собственная роль, напарник и развитие.</div>
         </div>
         <div class="card avatar">
           <div class="scene-title">
             <div class="chips"><span class="chip">футболист</span><span class="chip">маг</span><span class="chip">археолог</span><span class="chip">свой герой</span></div>
-            <h2>Мир не общий для всех. Мир строится вокруг ребёнка.</h2>
+            <h2>Мир не общий для всех.<br>Мир строится вокруг ребёнка.</h2>
             <p>Если ребёнок выбрал футболиста, он учит китайский через тренировку, друга, команду и матч.</p>
           </div>
         </div>
@@ -228,12 +227,12 @@
     </section>
 
     <div class="footer">
-      MVP v7: детский урок очищен от технических кнопок. ИИ и будущий 2D/3D вынесены в кабинет родителя.
+      MVP v8: стартовый экран очищен от служебной информации. Детская часть и родительская часть разделены понятнее.
     </div>
   </div>
 
 <script>
-const storageKey = "chineseQuestMvp.v7";
+const storageKey = "chineseQuestMvp.v8";
 let state = {
   profile:null,
   currentDay:1,
@@ -423,7 +422,7 @@ function loadSaved(){
   renderWorld(); go("world");
 }
 function save(){localStorage.setItem(storageKey,JSON.stringify(state));}
-function resetAll(){if(confirm("Сбросить прохождение MVP v7?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
+function resetAll(){if(confirm("Сбросить прохождение MVP v8?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
 function speak(text){
   if(!("speechSynthesis" in window)){alert("Браузер не поддерживает озвучку.");return;}
   speechSynthesis.cancel();
