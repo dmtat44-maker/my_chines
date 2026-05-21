@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Китайский квест — MVP v8</title>
+  <title>Китайский квест — MVP v11</title>
   <style>
     :root {
       --bg:#f6f0e8; --card:#fffaf4; --ink:#172033; --muted:#667085;
@@ -94,15 +94,15 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v8</span></div></div>
-      <span class="pill">10 дней · чистый старт · понятный урок</span>
+      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v11</span></div></div>
+      <span class="pill">10 дней · тоны исправлены · правило без рандома</span>
     </header>
 
     <section class="screen active" id="start">
       <div class="hero">
         <div class="card">
           <h1>Пройди 10 дней и проверь, как работает путь ребёнка</h1>
-          <p><span class="strong">Цель MVP v8:</span> показать, что выбранная ребёнком роль не исчезает после первого урока, а становится линией истории на несколько дней.</p>
+          <p><span class="strong">Цель MVP v11:</span> показать, что выбранная ребёнком роль не исчезает после первого урока, а становится линией истории на несколько дней.</p>
           <p>Сейчас это демо с локальной генерацией. Если подключить backend, следующие дни может генерировать ИИ.</p><p><b>Важно:</b> если после обновления видишь старые вопросы, нажми “Сбросить тест” — браузер мог сохранить старое прохождение.</p>
           <div class="btn-row">
             <button onclick="go('profile')">Начать заново</button>
@@ -227,12 +227,12 @@
     </section>
 
     <div class="footer">
-      MVP v8: стартовый экран очищен от служебной информации. Детская часть и родительская часть разделены понятнее.
+      MVP v11: стартовый экран очищен от служебной информации. Детская часть и родительская часть разделены понятнее.
     </div>
   </div>
 
 <script>
-const storageKey = "chineseQuestMvp.v8";
+const storageKey = "chineseQuestMvp.v11";
 let state = {
   profile:null,
   currentDay:1,
@@ -422,7 +422,7 @@ function loadSaved(){
   renderWorld(); go("world");
 }
 function save(){localStorage.setItem(storageKey,JSON.stringify(state));}
-function resetAll(){if(confirm("Сбросить прохождение MVP v8?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
+function resetAll(){if(confirm("Сбросить прохождение MVP v11?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
 function speak(text){
   if(!("speechSynthesis" in window)){alert("Браузер не поддерживает озвучку.");return;}
   speechSynthesis.cancel();
@@ -444,60 +444,403 @@ function roleSentence(day){
   ];
   return variants[day-1] || variants[0];
 }
-function generatedMission(day){
-  const p=state.profile, h=p.hero.name, place=p.hero.place, goal=p.hero.goal, c=p.companion;
-  const base=baseDays[day-1];
-  if(p.hero.key==="football"){
-    const missions=[
-      "войти на тренировочное поле и познакомиться с другом",
-      "посчитать игроков команды",
-      "выбрать цвет формы",
-      "добежать до ворот и посмотреть на поле",
-      "попить воды после тренировки",
-      "ответить тренеру на вопрос",
-      "рассказать другу о семье",
-      "найти ключ от раздевалки и карту поля",
-      "сказать другу первую фразу",
-      "сыграть первое учебное испытание"
-    ];
-    return missions[day-1];
-  }
-  if(p.hero.key==="magic"){
-    const missions=[
-      "открыть ворота школы дракона",
-      "посчитать магические печати",
-      "выбрать цвет кристалла",
-      "произнести действие-заклинание",
-      "попить воды после тренировки заклинаний",
-      "ответить хранителю на вопрос",
-      "рассказать другу о семье",
-      "найти ключ от башни и карту школы",
-      "сказать другу первую магическую фразу",
-      "пройти испытание дракона"
-    ];
-    return missions[day-1];
-  }
-  if(p.hero.key==="archaeology"){
-    const missions=[
-      "познакомиться в лагере экспедиции",
-      "посчитать древние камни",
-      "выбрать цвет отметок на карте",
-      "пойти к месту раскопок",
-      "попить воды после тренировки экспедиции",
-      "ответить на вопрос друга",
-      "рассказать о себе в дневнике",
-      "найти ключ и карту",
-      "сказать первую фразу в экспедиции",
-      "открыть первый древний сундук"
-    ];
-    return missions[day-1];
-  }
-  return `${h} в локации “${place}”: ${base.focus || goal}. ${c} помогает пройти задание дня ${day}.`;
+function cloneDay(obj){
+  return JSON.parse(JSON.stringify(obj));
 }
+
+function capFirst(text){
+  text = String(text || "");
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+}
+
+function normalizeText(text){
+  return String(text || "").toLowerCase().trim();
+}
+
+function roleProfile(){
+  const p = state.profile || {};
+  const key = p.hero?.key || "custom";
+  const name = normalizeText(p.hero?.name || "");
+
+  if(key === "football"){
+    return {
+      key:"football",
+      label:"футболист",
+      place:"китайская футбольная академия",
+      friendRole:"тренер",
+      group:"команда",
+      object:"мяч",
+      objectHanzi:"球",
+      objectPinyin:"qiú",
+      objectRu:"мяч",
+      clothing:"футбольная форма",
+      clothingHanzi:"球衣",
+      clothingPinyin:"qiúyī",
+      colorPhraseHanzi:"我喜欢蓝色球衣。",
+      colorPhrasePinyin:"Wǒ xǐhuan lánsè qiúyī.",
+      colorPhraseRu:"Мне нравится синяя футбольная форма.",
+      activity:"тренировка",
+      activityHanzi:"训练",
+      activityPinyin:"xùnliàn",
+      afterPhraseHanzi:"训练以后，我喝水。",
+      afterPhrasePinyin:"Xùnliàn yǐhòu, wǒ hē shuǐ.",
+      afterPhraseRu:"После тренировки я пью воду.",
+      action:"бежать",
+      actionHanzi:"跑",
+      actionPinyin:"pǎo",
+      actionRu:"бежать",
+      location:"футбольное поле",
+      locationHanzi:"球场",
+      locationPinyin:"qiúchǎng",
+      locationRu:"футбольное поле",
+      finale:"первое учебное испытание на поле"
+    };
+  }
+
+  if(key === "magic"){
+    return {
+      key:"magic",
+      label:"маг",
+      place:"школа дракона",
+      friendRole:"хранитель",
+      group:"магический круг",
+      object:"кристалл",
+      objectHanzi:"水晶",
+      objectPinyin:"shuǐjīng",
+      objectRu:"кристалл",
+      clothing:"магический плащ",
+      clothingHanzi:"披风",
+      clothingPinyin:"pīfēng",
+      colorPhraseHanzi:"我喜欢蓝色水晶。",
+      colorPhrasePinyin:"Wǒ xǐhuan lánsè shuǐjīng.",
+      colorPhraseRu:"Мне нравится синий кристалл.",
+      activity:"практика заклинаний",
+      activityHanzi:"练习",
+      activityPinyin:"liànxí",
+      afterPhraseHanzi:"练习以后，我喝水。",
+      afterPhrasePinyin:"Liànxí yǐhòu, wǒ hē shuǐ.",
+      afterPhraseRu:"После практики я пью воду.",
+      action:"учить",
+      actionHanzi:"学",
+      actionPinyin:"xué",
+      actionRu:"учить",
+      location:"башня",
+      locationHanzi:"塔",
+      locationPinyin:"tǎ",
+      locationRu:"башня",
+      finale:"испытание дракона"
+    };
+  }
+
+  if(key === "archaeology"){
+    return {
+      key:"archaeology",
+      label:"археолог",
+      place:"лагерь экспедиции",
+      friendRole:"проводник",
+      group:"экспедиция",
+      object:"карта",
+      objectHanzi:"地图",
+      objectPinyin:"dìtú",
+      objectRu:"карта",
+      clothing:"полевая куртка",
+      clothingHanzi:"衣服",
+      clothingPinyin:"yīfu",
+      colorPhraseHanzi:"我喜欢蓝色地图。",
+      colorPhrasePinyin:"Wǒ xǐhuan lánsè dìtú.",
+      colorPhraseRu:"Мне нравится синяя карта.",
+      activity:"экспедиция",
+      activityHanzi:"探险",
+      activityPinyin:"tànxiǎn",
+      afterPhraseHanzi:"探险以后，我喝水。",
+      afterPhrasePinyin:"Tànxiǎn yǐhòu, wǒ hē shuǐ.",
+      afterPhraseRu:"После экспедиции я пью воду.",
+      action:"смотреть",
+      actionHanzi:"看",
+      actionPinyin:"kàn",
+      actionRu:"смотреть",
+      location:"древние ворота",
+      locationHanzi:"门",
+      locationPinyin:"mén",
+      locationRu:"ворота",
+      finale:"открытие древнего сундука"
+    };
+  }
+
+  // Свой герой: отдельная ветка для балерины/балета/танцев.
+  if(name.includes("балерин") || name.includes("балет") || name.includes("танц")){
+    return {
+      key:"ballet",
+      label:p.hero?.name || "балерина",
+      place:"китайская балетная студия",
+      friendRole:"партнёр по танцу",
+      group:"танцевальная группа",
+      object:"сцена",
+      objectHanzi:"舞台",
+      objectPinyin:"wǔtái",
+      objectRu:"сцена",
+      clothing:"танцевальный костюм",
+      clothingHanzi:"舞衣",
+      clothingPinyin:"wǔyī",
+      colorPhraseHanzi:"我喜欢蓝色舞衣。",
+      colorPhrasePinyin:"Wǒ xǐhuan lánsè wǔyī.",
+      colorPhraseRu:"Мне нравится синий танцевальный костюм.",
+      activity:"репетиция",
+      activityHanzi:"练习",
+      activityPinyin:"liànxí",
+      afterPhraseHanzi:"练习以后，我喝水。",
+      afterPhrasePinyin:"Liànxí yǐhòu, wǒ hē shuǐ.",
+      afterPhraseRu:"После репетиции я пью воду.",
+      action:"танцевать",
+      actionHanzi:"跳舞",
+      actionPinyin:"tiàowǔ",
+      actionRu:"танцевать",
+      location:"сцена",
+      locationHanzi:"舞台",
+      locationPinyin:"wǔtái",
+      locationRu:"сцена",
+      finale:"первое выступление на сцене"
+    };
+  }
+
+  // Нейтральная ветка для любого своего героя, пока не подключён ИИ.
+  return {
+    key:"custom",
+    label:p.hero?.name || "свой герой",
+    place:`личный мир героя “${p.hero?.name || "свой герой"}”`,
+    friendRole:"помощник",
+    group:"отряд",
+    object:"предмет",
+    objectHanzi:"东西",
+    objectPinyin:"dōngxi",
+    objectRu:"предмет",
+    clothing:"костюм героя",
+    clothingHanzi:"衣服",
+    clothingPinyin:"yīfu",
+    colorPhraseHanzi:"我喜欢蓝色衣服。",
+    colorPhrasePinyin:"Wǒ xǐhuan lánsè yīfu.",
+    colorPhraseRu:"Мне нравится синяя одежда.",
+    activity:"задание",
+    activityHanzi:"任务",
+    activityPinyin:"rènwu",
+    afterPhraseHanzi:"任务以后，我喝水。",
+    afterPhrasePinyin:"Rènwu yǐhòu, wǒ hē shuǐ.",
+    afterPhraseRu:"После задания я пью воду.",
+    action:"идти",
+    actionHanzi:"去",
+    actionPinyin:"qù",
+    actionRu:"идти",
+    location:"место задания",
+    locationHanzi:"地方",
+    locationPinyin:"dìfang",
+    locationRu:"место",
+    finale:"первое испытание героя"
+  };
+}
+
+function toneInfoFor(hanzi){
+  const map = {
+    "球": {tone:"2-й тон", hint:"голос идёт вверх, как вопрос"},
+    "球衣": {tone:"2-й + 1-й", hint:"qiú — вверх, yī — ровно и высоко"},
+    "训练": {tone:"4-й + 4-й", hint:"оба слога резко вниз"},
+    "跑": {tone:"3-й тон", hint:"голос вниз-вверх, с провалом"},
+    "球场": {tone:"2-й + 3-й", hint:"qiú — вверх, chǎng — вниз-вверх"},
+
+    "水晶": {tone:"3-й + 1-й", hint:"shuǐ — вниз-вверх, jīng — ровно"},
+    "披风": {tone:"1-й + 1-й", hint:"оба слога ровно и высоко"},
+    "练习": {tone:"4-й + 2-й", hint:"liàn — резко вниз, xí — вверх"},
+    "学": {tone:"2-й тон", hint:"голос идёт вверх, как вопрос"},
+    "塔": {tone:"3-й тон", hint:"вниз-вверх, с провалом"},
+
+    "地图": {tone:"4-й + 2-й", hint:"dì — резко вниз, tú — вверх"},
+    "衣服": {tone:"1-й + лёгкий", hint:"yī — ровно, fu — коротко и слабо"},
+    "探险": {tone:"4-й + 3-й", hint:"tàn — резко вниз, xiǎn — вниз-вверх"},
+    "看": {tone:"4-й тон", hint:"резко вниз"},
+    "门": {tone:"2-й тон", hint:"голос идёт вверх"},
+
+    "舞台": {tone:"3-й + 2-й", hint:"wǔ — вниз-вверх, tái — вверх"},
+    "舞衣": {tone:"3-й + 1-й", hint:"wǔ — вниз-вверх, yī — ровно"},
+    "跳舞": {tone:"4-й + 3-й", hint:"tiào — резко вниз, wǔ — вниз-вверх"},
+
+    "东西": {tone:"1-й + лёгкий", hint:"dōng — ровно, xi — коротко и слабо"},
+    "任务": {tone:"4-й + лёгкий", hint:"rèn — резко вниз, wu — коротко и слабо"},
+    "去": {tone:"4-й тон", hint:"резко вниз"},
+    "地方": {tone:"4-й + лёгкий", hint:"dì — резко вниз, fang — коротко"}
+  };
+  return map[hanzi] || {tone:"см. pinyin", hint:"произнеси по знакам тона в pinyin"};
+}
+
+function wordWithTone(hanzi, pinyin, ru, fallbackHint){
+  const info = toneInfoFor(hanzi);
+  return {
+    hanzi,
+    pinyin,
+    ru,
+    tone: info.tone,
+    hint: fallbackHint || info.hint
+  };
+}
+
+
+function adaptDayToRole(base, day){
+  const p = state.profile || {};
+  const rp = roleProfile();
+  const d = cloneDay(base);
+  const companion = capFirst(p.companion || "напарник");
+
+  if(day === 1){
+    d.theme = "Знакомство";
+    d.focus = `познакомиться с другом в мире “${rp.label}”`;
+    d.target = {hanzi:"你好，我是朋友。", pinyin:"Nǐ hǎo, wǒ shì péngyou.", ru:"Привет, я друг.", audio:"你好，我是朋友。"};
+    d.roleMission = `${p.child || "Герой"} приходит в ${rp.place}. ${companion} помогает познакомиться с первым китайским другом.`;
+    d.words = [
+      {hanzi:"你好",pinyin:"nǐ hǎo",ru:"привет",tone:"nǐ — 3-й тон, hǎo — 3-й тон",hint:"вниз-вверх, как маленькая волна"},
+      {hanzi:"我",pinyin:"wǒ",ru:"я",tone:"3-й тон",hint:"голос вниз-вверх"},
+      {hanzi:"是",pinyin:"shì",ru:"быть / являться",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"朋友",pinyin:"péngyou",ru:"друг",tone:"péng — 2-й, you — лёгкий",hint:"пэн? + коротко йоу"},
+      {hanzi:"谢谢",pinyin:"xièxie",ru:"спасибо",tone:"xiè — 4-й, xie — лёгкий",hint:"сье! + коротко се"}
+    ];
+  }
+
+  if(day === 2){
+    d.theme = `${capFirst(rp.group)} и числа`;
+    d.focus = `посчитать участников: один, два, три`;
+    d.target = {hanzi:"我们有三个朋友。", pinyin:"Wǒmen yǒu sān ge péngyou.", ru:"У нас есть три друга.", audio:"我们有三个朋友。"};
+    d.roleMission = `${capFirst(rp.friendRole)} просит посчитать, сколько друзей пришли в ${rp.place}.`;
+    d.words = [
+      {hanzi:"一",pinyin:"yī",ru:"один",tone:"1-й тон",hint:"ровно высоко"},
+      {hanzi:"二",pinyin:"èr",ru:"два",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"三",pinyin:"sān",ru:"три",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"我们",pinyin:"wǒmen",ru:"мы",tone:"wǒ — 3-й, men — лёгкий",hint:"во-а + коротко мэн"},
+      {hanzi:"朋友",pinyin:"péngyou",ru:"друг",tone:"2-й + лёгкий",hint:"вверх + коротко"}
+    ];
+  }
+
+  if(day === 3){
+    d.theme = `Цвет: ${rp.clothing}`;
+    d.focus = `выбрать синий вариант: ${rp.clothing}`;
+    d.target = {hanzi:rp.colorPhraseHanzi, pinyin:rp.colorPhrasePinyin, ru:rp.colorPhraseRu, audio:rp.colorPhraseHanzi};
+    d.roleMission = `${p.child || "Герой"} выбирает цвет для “${rp.clothing}”, чтобы продолжить путь “${rp.label}”.`;
+    d.words = [
+      {hanzi:"蓝色",pinyin:"lánsè",ru:"синий цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+      {hanzi:"红色",pinyin:"hóngsè",ru:"красный цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+      {hanzi:"白色",pinyin:"báisè",ru:"белый цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+      wordWithTone(rp.clothingHanzi, rp.clothingPinyin, rp.clothing, "слово связано с выбранной ролью"),
+      {hanzi:"颜色",pinyin:"yánsè",ru:"цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"}
+    ];
+  }
+
+  if(day === 4){
+    d.theme = `Действие героя: ${rp.action}`;
+    d.focus = `сделать действие “${rp.action}” в мире “${rp.label}”`;
+    d.target = {hanzi:`我${rp.actionHanzi}。`, pinyin:`Wǒ ${rp.actionPinyin}.`, ru:`Я ${rp.actionRu}.`, audio:`我${rp.actionHanzi}。`};
+    d.roleMission = `${companion} зовёт героя выполнить действие: ${rp.actionRu}.`;
+    d.words = [
+      wordWithTone(rp.actionHanzi, rp.actionPinyin, rp.actionRu, "главное действие выбранной роли"),
+      {hanzi:"去",pinyin:"qù",ru:"идти",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"看",pinyin:"kàn",ru:"смотреть",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"学",pinyin:"xué",ru:"учить",tone:"2-й тон",hint:"вверх, как вопрос"},
+      {hanzi:"说",pinyin:"shuō",ru:"говорить",tone:"1-й тон",hint:"ровно"}
+    ];
+  }
+
+  if(day === 5){
+    d.theme = `Вода после: ${rp.activity}`;
+    d.focus = `попить воды после: ${rp.activity}`;
+    d.target = {hanzi:rp.afterPhraseHanzi, pinyin:rp.afterPhrasePinyin, ru:rp.afterPhraseRu, audio:rp.afterPhraseHanzi};
+    d.roleMission = `После “${rp.activity}” герой должен восстановить силы и сказать фразу дня.`;
+    d.words = [
+      wordWithTone(rp.activityHanzi, rp.activityPinyin, rp.activity, "связано с выбранной ролью"),
+      {hanzi:"以后",pinyin:"yǐhòu",ru:"после",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+      {hanzi:"喝",pinyin:"hē",ru:"пить",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"水",pinyin:"shuǐ",ru:"вода",tone:"3-й тон",hint:"вниз-вверх"},
+      {hanzi:"休息",pinyin:"xiūxi",ru:"отдыхать",tone:"1-й + лёгкий",hint:"ровно + коротко"}
+    ];
+  }
+
+  if(day === 6){
+    d.theme = "Вопрос: где ты?";
+    d.focus = `ответить другу, где герой находится: ${rp.location}`;
+    d.target = {hanzi:"你在哪里？", pinyin:"Nǐ zài nǎli?", ru:"Где ты?", audio:"你在哪里？"};
+    d.roleMission = `Китайский друг ищет героя в локации “${rp.location}” и задаёт первый вопрос.`;
+    d.words = [
+      {hanzi:"谁",pinyin:"shéi",ru:"кто",tone:"2-й тон",hint:"вверх"},
+      {hanzi:"什么",pinyin:"shénme",ru:"что",tone:"2-й + лёгкий",hint:"вверх + коротко"},
+      {hanzi:"哪里",pinyin:"nǎli",ru:"где",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+      {hanzi:"在",pinyin:"zài",ru:"находиться / быть где-то",tone:"4-й тон",hint:"резко вниз"},
+      wordWithTone(rp.locationHanzi, rp.locationPinyin, rp.locationRu, "место из выбранного мира")
+    ];
+  }
+
+  if(day === 7){
+    d.theme = "Рассказ о себе";
+    d.focus = `сказать, что нравится китайский и путь “${rp.label}”`;
+    d.target = {hanzi:"我喜欢中文。", pinyin:"Wǒ xǐhuan Zhōngwén.", ru:"Мне нравится китайский язык.", audio:"我喜欢中文。"};
+    d.roleMission = `${capFirst(rp.friendRole)} просит героя рассказать о себе и своём интересе.`;
+    d.words = [
+      {hanzi:"爸爸",pinyin:"bàba",ru:"папа",tone:"4-й + лёгкий",hint:"ба! + коротко"},
+      {hanzi:"妈妈",pinyin:"māma",ru:"мама",tone:"1-й + лёгкий",hint:"ровно + коротко"},
+      {hanzi:"家",pinyin:"jiā",ru:"дом/семья",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"喜欢",pinyin:"xǐhuan",ru:"нравится",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+      {hanzi:"中文",pinyin:"Zhōngwén",ru:"китайский язык",tone:"1-й + 2-й",hint:"ровно + вверх"}
+    ];
+  }
+
+  if(day === 8){
+    d.theme = `Предмет мира: ${rp.object}`;
+    d.focus = `найти важный предмет: ${rp.object}`;
+    d.target = {hanzi:`我有${rp.objectHanzi}。`, pinyin:`Wǒ yǒu ${rp.objectPinyin}.`, ru:`У меня есть ${rp.objectRu}.`, audio:`我有${rp.objectHanzi}。`};
+    d.roleMission = `В мире “${rp.label}” появляется важный предмет: ${rp.object}.`;
+    d.words = [
+      wordWithTone(rp.objectHanzi, rp.objectPinyin, rp.objectRu, "важный предмет выбранной роли"),
+      {hanzi:"书",pinyin:"shū",ru:"книга",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"地图",pinyin:"dìtú",ru:"карта",tone:"4-й + 2-й",hint:"резко вниз + вверх"},
+      {hanzi:"门",pinyin:"mén",ru:"дверь/ворота",tone:"2-й тон",hint:"вверх"},
+      {hanzi:"钥匙",pinyin:"yàoshi",ru:"ключ",tone:"4-й + лёгкий",hint:"резко вниз + коротко"}
+    ];
+  }
+
+  if(day === 9){
+    d.theme = "Мини-диалог с другом";
+    d.focus = `сказать другу, что он часть твоей истории`;
+    d.target = {hanzi:"你是我的朋友。", pinyin:"Nǐ shì wǒ de péngyou.", ru:"Ты мой друг.", audio:"你是我的朋友。"};
+    d.roleMission = `${companion} и китайский друг готовят короткий диалог перед следующим испытанием.`;
+    d.words = [
+      {hanzi:"我是",pinyin:"wǒ shì",ru:"я являюсь / я —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+      {hanzi:"你是",pinyin:"nǐ shì",ru:"ты являешься / ты —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+      {hanzi:"我的",pinyin:"wǒ de",ru:"мой / моя",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+      {hanzi:"朋友",pinyin:"péngyou",ru:"друг",tone:"2-й + лёгкий",hint:"вверх + коротко"},
+      {hanzi:"再见",pinyin:"zàijiàn",ru:"пока",tone:"4-й + 4-й",hint:"два резких падения"}
+    ];
+  }
+
+  if(day === 10){
+    d.theme = `Первое испытание: ${rp.finale}`;
+    d.focus = `пройти итоговое событие роли “${rp.label}”`;
+    d.target = {hanzi:"今天开始，加油！", pinyin:"Jīntiān kāishǐ, jiāyóu!", ru:"Сегодня начинаем, вперёд!", audio:"今天开始，加油！"};
+    d.roleMission = `Герой готов к событию: ${rp.finale}. Китайский друг говорит: 加油!`;
+    d.words = [
+      {hanzi:"开始",pinyin:"kāishǐ",ru:"начать",tone:"1-й + 3-й",hint:"ровно + вниз-вверх"},
+      {hanzi:"成功",pinyin:"chénggōng",ru:"успех",tone:"2-й + 1-й",hint:"вверх + ровно"},
+      {hanzi:"加油",pinyin:"jiāyóu",ru:"давай! вперёд!",tone:"1-й + 2-й",hint:"ровно + вверх"},
+      {hanzi:"今天",pinyin:"jīntiān",ru:"сегодня",tone:"1-й + 1-й",hint:"ровно"},
+      {hanzi:"明白",pinyin:"míngbai",ru:"понятно",tone:"2-й + лёгкий",hint:"вверх + коротко"}
+    ];
+  }
+
+  return d;
+}
+
+function generatedMission(day){
+  const base = adaptDayToRole(baseDays[day-1], day);
+  return base.roleMission || base.focus || "пройти задание дня";
+}
+
 function seededRandom(seed){
   let x = Math.sin(seed) * 10000;
   return x - Math.floor(x);
 }
+
 function shuffleStable(arr, seed){
   const a=[...arr];
   for(let i=a.length-1;i>0;i--){
@@ -506,9 +849,56 @@ function shuffleStable(arr, seed){
   }
   return a;
 }
+
 function makeContextQuiz(base, day){
-  const w=base.words;
+  const rp = roleProfile();
   const makeOptions=(correct, wrongs, seed)=>shuffleStable([correct,...wrongs.filter(x=>x!==correct).slice(0,2)], seed);
+
+  const byDay = {
+    1: [
+      {q:"Как по-китайски сказать “друг”?", correct:"朋友", wrongs:["谢谢","你好","我"]},
+      {q:"Как читается 你好?", correct:"nǐ hǎo", wrongs:["wǒ","shì","péngyou"]}
+    ],
+    2: [
+      {q:"Как по-китайски сказать “три”?", correct:"三", wrongs:["一","二","朋友"]},
+      {q:"Какое слово значит “мы”?", correct:"我们", wrongs:["朋友","三","二"]}
+    ],
+    3: [
+      {q:`Как сказать “синий / синяя” для предмета “${rp.clothing}”?`, correct:"蓝色", wrongs:["红色","白色","颜色"]},
+      {q:`Как по-китайски сказать “${rp.clothing}”?`, correct:rp.clothingHanzi, wrongs:["蓝色","红色","颜色"]}
+    ],
+    4: [
+      {q:`Главное действие роли “${rp.label}”: как сказать “${rp.actionRu}”?`, correct:rp.actionHanzi, wrongs:["去","看","说"]},
+      {q:"Как по-китайски сказать “говорить”?", correct:"说", wrongs:["看","去",rp.actionHanzi]}
+    ],
+    5: [
+      {q:`Какие два слова нужны для фразы “пью воду” после события “${rp.activity}”?`, correct:"喝 + 水", wrongs:["以后 + 水","休息 + 水",`${rp.activityHanzi} + 水`]},
+      {q:`Как по-китайски сказать “${rp.activity}”?`, correct:rp.activityHanzi, wrongs:["以后","喝","休息"]}
+    ],
+    6: [
+      {q:"Какое слово задаёт вопрос “где”?", correct:"哪里", wrongs:["谁","什么","吗"]},
+      {q:`Как по-китайски сказать место “${rp.locationRu}”?`, correct:rp.locationHanzi, wrongs:["在","哪里","什么"]}
+    ],
+    7: [
+      {q:"Как сказать “китайский язык”?", correct:"中文", wrongs:["家","爸爸","妈妈"]},
+      {q:"Как сказать “нравится”?", correct:"喜欢", wrongs:["中文","家","妈妈"]}
+    ],
+    8: [
+      {q:`Как по-китайски сказать предмет роли “${rp.objectRu}”?`, correct:rp.objectHanzi, wrongs:["书","地图","钥匙"]},
+      {q:"Как сказать “ключ”?", correct:"钥匙", wrongs:["地图","书",rp.objectHanzi]}
+    ],
+    9: [
+      {q:"Как сказать “мой / моя”?", correct:"我的", wrongs:["我是","你是","再见"]},
+      {q:"Как сказать “друг”?", correct:"朋友", wrongs:["明天","我的","你是"]}
+    ],
+    10: [
+      {q:"Как сказать “давай! вперёд!”?", correct:"加油", wrongs:["成功","开始","明白"]},
+      {q:"Как сказать “сегодня”?", correct:"今天", wrongs:["开始","成功","明白"]}
+    ]
+  };
+
+  const daySpecific = byDay[day];
+
   return [
     {
       q:`Что означает фраза дня: ${base.target.hanzi}?`,
@@ -516,25 +906,28 @@ function makeContextQuiz(base, day){
       answer:base.target.ru
     },
     {
-      q:`Какое слово из урока значит “${w[0].ru}”?`,
-      options:makeOptions(w[0].hanzi, [w[1].hanzi, w[2].hanzi, w[3].hanzi], day*100+2),
-      answer:w[0].hanzi
+      q:daySpecific[0].q,
+      options:makeOptions(daySpecific[0].correct, daySpecific[0].wrongs, day*100+2),
+      answer:daySpecific[0].correct
     },
     {
-      q:`Какое конкретное слово из фразы дня нужно выбрать?`,
-      options:makeOptions(w[2].hanzi, [w[3].hanzi, w[4].hanzi, w[1].hanzi], day*100+3),
-      answer:w[2].hanzi
+      q:daySpecific[1].q,
+      options:makeOptions(daySpecific[1].correct, daySpecific[1].wrongs, day*100+3),
+      answer:daySpecific[1].correct
     },
     {
-      q:`Как читается ${w[3].hanzi}?`,
-      options:makeOptions(w[3].pinyin, [w[0].pinyin, w[1].pinyin, w[2].pinyin], day*100+4),
-      answer:w[3].pinyin
+      q:`Перед продолжением сюжета что нужно сделать?`,
+      options:["пройти языковой пароль", "пропустить урок", "закрыть приложение", "не слушать фразу"],
+      answer:"пройти языковой пароль"
     }
   ];
 }
+
+
 function getDayData(day){
   if(state.dayData[day]) return state.dayData[day];
-  const base=baseDays[day-1];
+  const rawBase=baseDays[day-1];
+  const base=adaptDayToRole(rawBase, day);
   const p=state.profile;
   const data={
     day, theme:base.theme, words:base.words,
@@ -542,7 +935,7 @@ function getDayData(day){
     mission:generatedMission(day),
     friend: day<4 ? "小明 / Xiǎo Míng" : day<7 ? "小美 / Xiǎo Měi" : "老师 / Lǎoshī",
     dialogue:[
-      {who:p.companion, cls:"companion", text:`${p.child}, я помню твой путь: ты выбрал роль “${p.hero.name}”. Сегодня мир не начнётся без языкового пароля.`},
+      {who:capFirst(p.companion), cls:"companion", text:`${p.child}, я помню твой путь: ты выбрал роль “${p.hero.name}”. Сегодня мир не начнётся без языкового пароля.`},
       {who:"Китайский друг", cls:"friend", text:`你好! Сегодня тема: ${base.theme}. Скажи или выбери правильные слова, и мы продолжим миссию.`},
       {who:"Миссия", cls:"", text:generatedMission(day)}
     ],
@@ -634,7 +1027,7 @@ function renderDay(day){
       <div>
         <h3>Слова дня</h3>
         <div class="word-list">
-          ${data.words.map(w=>`<div class="word"><div class="hanzi">${h(w.hanzi)}</div><div class="pinyin">${h(w.pinyin)} — ${h(w.ru)}</div><div class="pronounce"><div class="syllable"><b>Тон:</b> ${h(w.tone)}</div><div class="small">${h(w.hint)}</div></div><button class="secondary" style="margin-top:10px;padding:9px 12px" onclick="speak('${w.hanzi}')">слушать</button></div>`).join("")}
+          ${data.words.map(w=>`<div class="word"><div class="hanzi">${h(w.hanzi)}</div><div class="pinyin">${h(w.pinyin)} — ${h(w.ru)}</div><div class="pronounce"><div class="syllable"><b>Тоны:</b> ${h(w.tone)}</div><div class="small">${h(w.hint)}</div></div><button class="secondary" style="margin-top:10px;padding:9px 12px" onclick="speak('${w.hanzi}')">слушать</button></div>`).join("")}
         </div>
         <h3>Языковой пароль</h3>
         <div class="quiz">
