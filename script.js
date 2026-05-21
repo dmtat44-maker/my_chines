@@ -582,7 +582,7 @@ function wordWithTone(hanzi, pinyin, ru, fallbackHint){
     pinyin,
     ru,
     tone: info.tone,
-    hint: fallbackHint || info.hint
+    hint: info.hint
   };
 }
 
@@ -660,7 +660,7 @@ function adaptDayToRole(base, day){
       {hanzi:"蓝色",pinyin:"lánsè",ru:"синий цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
       {hanzi:"红色",pinyin:"hóngsè",ru:"красный цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
       {hanzi:"白色",pinyin:"báisè",ru:"белый цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
-      wordWithTone(rp.clothingHanzi, rp.clothingPinyin, rp.clothing, "слово связано с выбранной ролью"),
+      wordWithTone(rp.clothingHanzi, rp.clothingPinyin, rp.clothing, ""),
       {hanzi:"颜色",pinyin:"yánsè",ru:"цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"}
     ];
   }
@@ -671,7 +671,7 @@ function adaptDayToRole(base, day){
     d.target = {hanzi:`我${rp.actionHanzi}。`, pinyin:`Wǒ ${rp.actionPinyin}.`, ru:`Я ${rp.actionRu}.`, audio:`我${rp.actionHanzi}。`};
     d.roleMission = `${companion} зовёт героя выполнить действие: ${rp.actionRu}.`;
     d.words = fillToFive([
-      wordWithTone(rp.actionHanzi, rp.actionPinyin, rp.actionRu, "слово действия"),
+      wordWithTone(rp.actionHanzi, rp.actionPinyin, rp.actionRu, ""),
       {hanzi:"去",pinyin:"qù",ru:"идти",tone:"4-й тон",hint:"резко вниз"},
       {hanzi:"看",pinyin:"kàn",ru:"смотреть",tone:"4-й тон",hint:"резко вниз"},
       {hanzi:"学",pinyin:"xué",ru:"учить",tone:"2-й тон",hint:"вверх, как вопрос"},
@@ -686,7 +686,7 @@ function adaptDayToRole(base, day){
     d.target = {hanzi:rp.afterPhraseHanzi, pinyin:rp.afterPhrasePinyin, ru:rp.afterPhraseRu, audio:rp.afterPhraseHanzi};
     d.roleMission = `После “${rp.activity}” герой должен восстановить силы и сказать фразу дня.`;
     d.words = fillToFive([
-      wordWithTone(rp.activityHanzi, rp.activityPinyin, rp.activity, "связано с выбранной ролью"),
+      wordWithTone(rp.activityHanzi, rp.activityPinyin, rp.activity, ""),
       {hanzi:"以后",pinyin:"yǐhòu",ru:"после",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
       {hanzi:"喝",pinyin:"hē",ru:"пить",tone:"1-й тон",hint:"ровно"},
       {hanzi:"水",pinyin:"shuǐ",ru:"вода",tone:"3-й тон",hint:"вниз-вверх"},
@@ -704,7 +704,7 @@ function adaptDayToRole(base, day){
       {hanzi:"什么",pinyin:"shénme",ru:"что",tone:"2-й + лёгкий",hint:"вверх + коротко"},
       {hanzi:"哪里",pinyin:"nǎli",ru:"где",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
       {hanzi:"在",pinyin:"zài",ru:"находиться / быть где-то",tone:"4-й тон",hint:"резко вниз"},
-      wordWithTone(rp.locationHanzi, rp.locationPinyin, rp.locationRu, "место из выбранного мира")
+      wordWithTone(rp.locationHanzi, rp.locationPinyin, rp.locationRu, "")
     ];
   }
 
@@ -728,7 +728,7 @@ function adaptDayToRole(base, day){
     d.target = {hanzi:`我有${rp.objectHanzi}。`, pinyin:`Wǒ yǒu ${rp.objectPinyin}.`, ru:`У меня есть ${rp.objectRu}.`, audio:`我有${rp.objectHanzi}。`};
     d.roleMission = `В мире “${rp.label}” появляется важный предмет: ${rp.object}.`;
     d.words = fillToFive([
-      wordWithTone(rp.objectHanzi, rp.objectPinyin, rp.objectRu, "важный предмет выбранной роли"),
+      wordWithTone(rp.objectHanzi, rp.objectPinyin, rp.objectRu, ""),
       {hanzi:"书",pinyin:"shū",ru:"книга",tone:"1-й тон",hint:"ровно"},
       {hanzi:"地图",pinyin:"dìtú",ru:"карта",tone:"4-й + 2-й",hint:"резко вниз + вверх"},
       {hanzi:"门",pinyin:"mén",ru:"дверь/ворота",tone:"2-й тон",hint:"вверх"},
