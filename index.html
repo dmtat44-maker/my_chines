@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Китайский квест — MVP v4</title>
+  <title>Китайский квест — MVP v7</title>
   <style>
     :root {
       --bg:#f6f0e8; --card:#fffaf4; --ink:#172033; --muted:#667085;
@@ -62,6 +62,10 @@
     .bubble b{display:block;margin-bottom:5px}
     .word-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
     .word{border:1px solid var(--line);border-radius:22px;padding:15px;background:white}
+    .sentence-card{border:1px solid rgba(211,59,48,.22);background:linear-gradient(135deg,rgba(211,59,48,.08),rgba(243,180,63,.12));border-radius:24px;padding:16px;margin:14px 0}
+    .sentence-main{font-size:34px;font-weight:950;line-height:1.1}
+    .sentence-ru{font-size:15px;color:var(--ink);font-weight:850;margin-top:7px}
+    .lesson-goal{border:1px solid rgba(22,155,98,.25);background:rgba(22,155,98,.08);border-radius:18px;padding:12px;margin:12px 0;color:var(--ink);font-weight:800}
     .hanzi{font-size:34px;font-weight:950}
     .pinyin{font-size:16px;color:var(--brand);font-weight:950}
     .small{font-size:13px;color:var(--muted);line-height:1.45}
@@ -90,16 +94,16 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v4</span></div></div>
-      <span class="pill">10 дней · роль ребёнка · ИИ-ready</span>
+      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v7</span></div></div>
+      <span class="pill">10 дней · фраза дня · проверка по смыслу</span>
     </header>
 
     <section class="screen active" id="start">
       <div class="hero">
         <div class="card">
           <h1>Пройди 10 дней как ребёнок и родитель</h1>
-          <p><span class="strong">Цель MVP v4:</span> показать, что выбранная ребёнком роль не исчезает после первого урока, а становится линией истории на несколько дней.</p>
-          <p>Сейчас это демо с локальной генерацией. Если подключить backend, следующие дни может генерировать ИИ.</p>
+          <p><span class="strong">Цель MVP v7:</span> показать, что выбранная ребёнком роль не исчезает после первого урока, а становится линией истории на несколько дней.</p>
+          <p>Сейчас это демо с локальной генерацией. Если подключить backend, следующие дни может генерировать ИИ.</p><p><b>Важно:</b> если после обновления видишь старые вопросы, нажми “Сбросить тест” — браузер мог сохранить старое прохождение.</p>
           <div class="btn-row">
             <button onclick="go('profile')">Начать заново</button>
             <button class="secondary" onclick="loadSaved()">Продолжить</button>
@@ -198,7 +202,13 @@
           <div class="road"><b>Языковой пароль:</b> без повторения прошлого дня сюжет не двигается.</div>
           <div class="road"><b>Будущий ИИ:</b> будет генерировать новые сцены под интерес ребёнка и уровень языка.</div>
         </div>
-        <div class="btn-row"><button onclick="go('world')">Вернуться к дням</button></div>
+        <h3>Режим родителя / разработчика</h3>
+        <p>Эти функции не показываются ребёнку во время урока, чтобы не отвлекать его от прохождения.</p>
+        <div class="btn-row">
+          <button class="secondary" onclick="go('future')">Показать развитие: голос / 2D / 3D</button>
+          <button class="blue" onclick="tryAiDay(state.currentDay)">Тест ИИ-генерации текущего дня</button>
+          <button onclick="go('world')">Вернуться к дням</button>
+        </div>
       </div>
     </section>
 
@@ -218,12 +228,12 @@
     </section>
 
     <div class="footer">
-      MVP v4: для теста 10 дней. Настоящий ИИ подключается через backend, не через открытый ключ в браузере.
+      MVP v7: детский урок очищен от технических кнопок. ИИ и будущий 2D/3D вынесены в кабинет родителя.
     </div>
   </div>
 
 <script>
-const storageKey = "chineseQuestMvp.v4";
+const storageKey = "chineseQuestMvp.v7";
 let state = {
   profile:null,
   currentDay:1,
@@ -249,76 +259,126 @@ const toneRows = [
 ];
 
 const baseDays = [
-  {theme:"Знакомство", words:[
-    {hanzi:"你好",pinyin:"nǐ hǎo",ru:"привет",tone:"nǐ — 3-й тон, hǎo — 3-й тон",hint:"вниз-вверх, как маленькая волна"},
-    {hanzi:"我",pinyin:"wǒ",ru:"я",tone:"3-й тон",hint:"голос вниз-вверх"},
-    {hanzi:"你",pinyin:"nǐ",ru:"ты",tone:"3-й тон",hint:"голос вниз-вверх"},
-    {hanzi:"朋友",pinyin:"péngyou",ru:"друг",tone:"péng — 2-й, you — лёгкий",hint:"пэн? + коротко йоу"},
-    {hanzi:"谢谢",pinyin:"xièxie",ru:"спасибо",tone:"xiè — 4-й, xie — лёгкий",hint:"сье! + коротко се"}
-  ]},
-  {theme:"Команда и числа", words:[
-    {hanzi:"一",pinyin:"yī",ru:"один",tone:"1-й тон",hint:"ровно высоко"},
-    {hanzi:"二",pinyin:"èr",ru:"два",tone:"4-й тон",hint:"резко вниз"},
-    {hanzi:"三",pinyin:"sān",ru:"три",tone:"1-й тон",hint:"ровно"},
-    {hanzi:"我们",pinyin:"wǒmen",ru:"мы",tone:"wǒ — 3-й, men — лёгкий",hint:"во-а + коротко мэн"},
-    {hanzi:"队",pinyin:"duì",ru:"команда",tone:"4-й тон",hint:"дуэй!"}
-  ]},
-  {theme:"Цвета", words:[
-    {hanzi:"红色",pinyin:"hóngsè",ru:"красный",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
-    {hanzi:"蓝色",pinyin:"lánsè",ru:"синий",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
-    {hanzi:"白色",pinyin:"báisè",ru:"белый",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
-    {hanzi:"黑色",pinyin:"hēisè",ru:"чёрный",tone:"1-й + 4-й",hint:"ровно + резко вниз"},
-    {hanzi:"颜色",pinyin:"yánsè",ru:"цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"}
-  ]},
-  {theme:"Действия", words:[
-    {hanzi:"去",pinyin:"qù",ru:"идти",tone:"4-й тон",hint:"резко вниз"},
-    {hanzi:"看",pinyin:"kàn",ru:"смотреть",tone:"4-й тон",hint:"резко вниз"},
-    {hanzi:"跑",pinyin:"pǎo",ru:"бежать",tone:"3-й тон",hint:"вниз-вверх"},
-    {hanzi:"学",pinyin:"xué",ru:"учить",tone:"2-й тон",hint:"вверх, как вопрос"},
-    {hanzi:"说",pinyin:"shuō",ru:"говорить",tone:"1-й тон",hint:"ровно"}
-  ]},
-  {theme:"Еда и силы", words:[
-    {hanzi:"水",pinyin:"shuǐ",ru:"вода",tone:"3-й тон",hint:"вниз-вверх"},
-    {hanzi:"饭",pinyin:"fàn",ru:"еда/рис",tone:"4-й тон",hint:"резко вниз"},
-    {hanzi:"苹果",pinyin:"píngguǒ",ru:"яблоко",tone:"2-й + 3-й",hint:"вверх + вниз-вверх"},
-    {hanzi:"喝",pinyin:"hē",ru:"пить",tone:"1-й тон",hint:"ровно"},
-    {hanzi:"吃",pinyin:"chī",ru:"есть",tone:"1-й тон",hint:"ровно"}
-  ]},
-  {theme:"Вопросы", words:[
-    {hanzi:"谁",pinyin:"shéi",ru:"кто",tone:"2-й тон",hint:"вверх"},
-    {hanzi:"什么",pinyin:"shénme",ru:"что",tone:"2-й + лёгкий",hint:"вверх + коротко"},
-    {hanzi:"哪里",pinyin:"nǎli",ru:"где",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
-    {hanzi:"吗",pinyin:"ma",ru:"вопросительная частица",tone:"лёгкий",hint:"коротко"},
-    {hanzi:"好",pinyin:"hǎo",ru:"хорошо",tone:"3-й тон",hint:"вниз-вверх"}
-  ]},
-  {theme:"Семья и рассказ о себе", words:[
-    {hanzi:"爸爸",pinyin:"bàba",ru:"папа",tone:"4-й + лёгкий",hint:"ба! + коротко"},
-    {hanzi:"妈妈",pinyin:"māma",ru:"мама",tone:"1-й + лёгкий",hint:"ровно + коротко"},
-    {hanzi:"家",pinyin:"jiā",ru:"дом/семья",tone:"1-й тон",hint:"ровно"},
-    {hanzi:"喜欢",pinyin:"xǐhuan",ru:"нравится",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
-    {hanzi:"中文",pinyin:"Zhōngwén",ru:"китайский язык",tone:"1-й + 2-й",hint:"ровно + вверх"}
-  ]},
-  {theme:"Предметы мира", words:[
-    {hanzi:"球",pinyin:"qiú",ru:"мяч/шар",tone:"2-й тон",hint:"вверх"},
-    {hanzi:"书",pinyin:"shū",ru:"книга",tone:"1-й тон",hint:"ровно"},
-    {hanzi:"地图",pinyin:"dìtú",ru:"карта",tone:"4-й + 2-й",hint:"резко вниз + вверх"},
-    {hanzi:"门",pinyin:"mén",ru:"дверь/ворота",tone:"2-й тон",hint:"вверх"},
-    {hanzi:"钥匙",pinyin:"yàoshi",ru:"ключ",tone:"4-й + лёгкий",hint:"резко вниз + коротко"}
-  ]},
-  {theme:"Мини-диалог", words:[
-    {hanzi:"我是",pinyin:"wǒ shì",ru:"я являюсь / я —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
-    {hanzi:"你是",pinyin:"nǐ shì",ru:"ты являешься / ты —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
-    {hanzi:"很好",pinyin:"hěn hǎo",ru:"очень хорошо",tone:"3-й + 3-й",hint:"первый часто звучит как 2-й"},
-    {hanzi:"再见",pinyin:"zàijiàn",ru:"пока",tone:"4-й + 4-й",hint:"два резких падения"},
-    {hanzi:"明天",pinyin:"míngtiān",ru:"завтра",tone:"2-й + 1-й",hint:"вверх + ровно"}
-  ]},
-  {theme:"Первое испытание", words:[
-    {hanzi:"开始",pinyin:"kāishǐ",ru:"начать",tone:"1-й + 3-й",hint:"ровно + вниз-вверх"},
-    {hanzi:"成功",pinyin:"chénggōng",ru:"успех",tone:"2-й + 1-й",hint:"вверх + ровно"},
-    {hanzi:"加油",pinyin:"jiāyóu",ru:"давай! вперёд!",tone:"1-й + 2-й",hint:"ровно + вверх"},
-    {hanzi:"今天",pinyin:"jīntiān",ru:"сегодня",tone:"1-й + 1-й",hint:"ровно"},
-    {hanzi:"明白",pinyin:"míngbai",ru:"понятно",tone:"2-й + лёгкий",hint:"вверх + коротко"}
-  ]}
+  {
+    theme:"Знакомство",
+    focus:"познакомиться с первым китайским другом",
+    target:{hanzi:"你好，我是朋友。", pinyin:"Nǐ hǎo, wǒ shì péngyou.", ru:"Привет, я друг.", audio:"你好，我是朋友。"},
+    words:[
+      {hanzi:"你好",pinyin:"nǐ hǎo",ru:"привет",tone:"nǐ — 3-й тон, hǎo — 3-й тон",hint:"вниз-вверх, как маленькая волна"},
+      {hanzi:"我",pinyin:"wǒ",ru:"я",tone:"3-й тон",hint:"голос вниз-вверх"},
+      {hanzi:"是",pinyin:"shì",ru:"быть / являться",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"朋友",pinyin:"péngyou",ru:"друг",tone:"péng — 2-й, you — лёгкий",hint:"пэн? + коротко йоу"},
+      {hanzi:"谢谢",pinyin:"xièxie",ru:"спасибо",tone:"xiè — 4-й, xie — лёгкий",hint:"сье! + коротко се"}
+    ]
+  },
+  {
+    theme:"Команда и числа",
+    focus:"попасть в команду и посчитать игроков",
+    target:{hanzi:"我们有三个朋友。", pinyin:"Wǒmen yǒu sān ge péngyou.", ru:"У нас есть три друга.", audio:"我们有三个朋友。"},
+    words:[
+      {hanzi:"一",pinyin:"yī",ru:"один",tone:"1-й тон",hint:"ровно высоко"},
+      {hanzi:"二",pinyin:"èr",ru:"два",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"三",pinyin:"sān",ru:"три",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"我们",pinyin:"wǒmen",ru:"мы",tone:"wǒ — 3-й, men — лёгкий",hint:"во-а + коротко мэн"},
+      {hanzi:"队",pinyin:"duì",ru:"команда",tone:"4-й тон",hint:"дуэй!"}
+    ]
+  },
+  {
+    theme:"Цвета",
+    focus:"выбрать цвет формы, кристалла или отметки на карте",
+    target:{hanzi:"我喜欢蓝色。", pinyin:"Wǒ xǐhuan lánsè.", ru:"Мне нравится синий цвет.", audio:"我喜欢蓝色。"},
+    words:[
+      {hanzi:"红色",pinyin:"hóngsè",ru:"красный",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+      {hanzi:"蓝色",pinyin:"lánsè",ru:"синий",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+      {hanzi:"白色",pinyin:"báisè",ru:"белый",tone:"2-й + 4-й",hint:"вверх + резко вниз"},
+      {hanzi:"黑色",pinyin:"hēisè",ru:"чёрный",tone:"1-й + 4-й",hint:"ровно + резко вниз"},
+      {hanzi:"颜色",pinyin:"yánsè",ru:"цвет",tone:"2-й + 4-й",hint:"вверх + резко вниз"}
+    ]
+  },
+  {
+    theme:"Действия",
+    focus:"сделать действие в мире героя",
+    target:{hanzi:"我去看朋友。", pinyin:"Wǒ qù kàn péngyou.", ru:"Я иду посмотреть друга.", audio:"我去看朋友。"},
+    words:[
+      {hanzi:"去",pinyin:"qù",ru:"идти",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"看",pinyin:"kàn",ru:"смотреть",tone:"4-й тон",hint:"резко вниз"},
+      {hanzi:"跑",pinyin:"pǎo",ru:"бежать",tone:"3-й тон",hint:"вниз-вверх"},
+      {hanzi:"学",pinyin:"xué",ru:"учить",tone:"2-й тон",hint:"вверх, как вопрос"},
+      {hanzi:"说",pinyin:"shuō",ru:"говорить",tone:"1-й тон",hint:"ровно"}
+    ]
+  },
+  {
+    theme:"Вода после тренировки",
+    focus:"попить воды после тренировки",
+    target:{hanzi:"训练以后，我喝水。", pinyin:"Xùnliàn yǐhòu, wǒ hē shuǐ.", ru:"После тренировки я пью воду.", audio:"训练以后，我喝水。"},
+    words:[
+      {hanzi:"训练",pinyin:"xùnliàn",ru:"тренировка",tone:"4-й + 4-й",hint:"два резких падения"},
+      {hanzi:"以后",pinyin:"yǐhòu",ru:"после",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+      {hanzi:"喝",pinyin:"hē",ru:"пить",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"水",pinyin:"shuǐ",ru:"вода",tone:"3-й тон",hint:"вниз-вверх"},
+      {hanzi:"休息",pinyin:"xiūxi",ru:"отдыхать",tone:"1-й + лёгкий",hint:"ровно + коротко"}
+    ]
+  },
+  {
+    theme:"Вопросы",
+    focus:"понять вопрос китайского друга",
+    target:{hanzi:"你在哪里？", pinyin:"Nǐ zài nǎli?", ru:"Где ты?", audio:"你在哪里？"},
+    words:[
+      {hanzi:"谁",pinyin:"shéi",ru:"кто",tone:"2-й тон",hint:"вверх"},
+      {hanzi:"什么",pinyin:"shénme",ru:"что",tone:"2-й + лёгкий",hint:"вверх + коротко"},
+      {hanzi:"哪里",pinyin:"nǎli",ru:"где",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+      {hanzi:"吗",pinyin:"ma",ru:"вопросительная частица",tone:"лёгкий",hint:"коротко"},
+      {hanzi:"在",pinyin:"zài",ru:"находиться / быть где-то",tone:"4-й тон",hint:"резко вниз"}
+    ]
+  },
+  {
+    theme:"Семья и рассказ о себе",
+    focus:"рассказать другу о себе и семье",
+    target:{hanzi:"我喜欢中文。", pinyin:"Wǒ xǐhuan Zhōngwén.", ru:"Мне нравится китайский язык.", audio:"我喜欢中文。"},
+    words:[
+      {hanzi:"爸爸",pinyin:"bàba",ru:"папа",tone:"4-й + лёгкий",hint:"ба! + коротко"},
+      {hanzi:"妈妈",pinyin:"māma",ru:"мама",tone:"1-й + лёгкий",hint:"ровно + коротко"},
+      {hanzi:"家",pinyin:"jiā",ru:"дом/семья",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"喜欢",pinyin:"xǐhuan",ru:"нравится",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+      {hanzi:"中文",pinyin:"Zhōngwén",ru:"китайский язык",tone:"1-й + 2-й",hint:"ровно + вверх"}
+    ]
+  },
+  {
+    theme:"Предметы мира",
+    focus:"найти ключ, карту или важный предмет",
+    target:{hanzi:"我有地图和钥匙。", pinyin:"Wǒ yǒu dìtú hé yàoshi.", ru:"У меня есть карта и ключ.", audio:"我有地图和钥匙。"},
+    words:[
+      {hanzi:"球",pinyin:"qiú",ru:"мяч/шар",tone:"2-й тон",hint:"вверх"},
+      {hanzi:"书",pinyin:"shū",ru:"книга",tone:"1-й тон",hint:"ровно"},
+      {hanzi:"地图",pinyin:"dìtú",ru:"карта",tone:"4-й + 2-й",hint:"резко вниз + вверх"},
+      {hanzi:"门",pinyin:"mén",ru:"дверь/ворота",tone:"2-й тон",hint:"вверх"},
+      {hanzi:"钥匙",pinyin:"yàoshi",ru:"ключ",tone:"4-й + лёгкий",hint:"резко вниз + коротко"}
+    ]
+  },
+  {
+    theme:"Мини-диалог",
+    focus:"сказать первую короткую фразу другу",
+    target:{hanzi:"你是我的朋友。", pinyin:"Nǐ shì wǒ de péngyou.", ru:"Ты мой друг.", audio:"你是我的朋友。"},
+    words:[
+      {hanzi:"我是",pinyin:"wǒ shì",ru:"я являюсь / я —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+      {hanzi:"你是",pinyin:"nǐ shì",ru:"ты являешься / ты —",tone:"3-й + 4-й",hint:"вниз-вверх + резко вниз"},
+      {hanzi:"我的",pinyin:"wǒ de",ru:"мой / моя",tone:"3-й + лёгкий",hint:"вниз-вверх + коротко"},
+      {hanzi:"再见",pinyin:"zàijiàn",ru:"пока",tone:"4-й + 4-й",hint:"два резких падения"},
+      {hanzi:"明天",pinyin:"míngtiān",ru:"завтра",tone:"2-й + 1-й",hint:"вверх + ровно"}
+    ]
+  },
+  {
+    theme:"Первое испытание",
+    focus:"подтвердить, что герой готов продолжать путь",
+    target:{hanzi:"今天开始，加油！", pinyin:"Jīntiān kāishǐ, jiāyóu!", ru:"Сегодня начинаем, вперёд!", audio:"今天开始，加油！"},
+    words:[
+      {hanzi:"开始",pinyin:"kāishǐ",ru:"начать",tone:"1-й + 3-й",hint:"ровно + вниз-вверх"},
+      {hanzi:"成功",pinyin:"chénggōng",ru:"успех",tone:"2-й + 1-й",hint:"вверх + ровно"},
+      {hanzi:"加油",pinyin:"jiāyóu",ru:"давай! вперёд!",tone:"1-й + 2-й",hint:"ровно + вверх"},
+      {hanzi:"今天",pinyin:"jīntiān",ru:"сегодня",tone:"1-й + 1-й",hint:"ровно"},
+      {hanzi:"明白",pinyin:"míngbai",ru:"понятно",tone:"2-й + лёгкий",hint:"вверх + коротко"}
+    ]
+  }
 ];
 
 function h(x){return String(x??"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
@@ -363,7 +423,7 @@ function loadSaved(){
   renderWorld(); go("world");
 }
 function save(){localStorage.setItem(storageKey,JSON.stringify(state));}
-function resetAll(){if(confirm("Сбросить прохождение MVP v4?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
+function resetAll(){if(confirm("Сбросить прохождение MVP v7?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
 function speak(text){
   if(!("speechSynthesis" in window)){alert("Браузер не поддерживает озвучку.");return;}
   speechSynthesis.cancel();
@@ -387,43 +447,91 @@ function roleSentence(day){
 }
 function generatedMission(day){
   const p=state.profile, h=p.hero.name, place=p.hero.place, goal=p.hero.goal, c=p.companion;
-  if(p.hero.key==="football") return [
-    "войти на тренировочное поле",
-    "посчитать игроков команды",
-    "выбрать цвет формы",
-    "добежать до ворот",
-    "выпить воду после тренировки",
-    "ответить тренеру на вопрос",
-    "рассказать другу о семье",
-    "найти ключ от раздевалки",
-    "позвать друга на тренировку",
-    "сыграть первое учебное испытание"
-  ][day-1];
-  if(p.hero.key==="magic") return [
-    "открыть ворота школы дракона",
-    "посчитать магические печати",
-    "выбрать цвет кристалла",
-    "произнести действие-заклинание",
-    "найти воду и еду для силы",
-    "ответить хранителю на вопрос",
-    "рассказать другу о семье",
-    "найти ключ от башни",
-    "сказать первую магическую фразу",
-    "пройти испытание дракона"
-  ][day-1];
-  if(p.hero.key==="archaeology") return [
-    "познакомиться в лагере экспедиции",
-    "посчитать древние камни",
-    "выбрать цвет отметок на карте",
-    "пойти к месту раскопок",
-    "собрать припасы",
-    "ответить на вопрос друга",
-    "рассказать о себе в дневнике",
-    "найти ключ и карту",
-    "сказать первую фразу в экспедиции",
-    "открыть первый древний сундук"
-  ][day-1];
-  return `${h} в локации “${place}”: ${goal}. ${c} помогает пройти задание дня ${day}.`;
+  const base=baseDays[day-1];
+  if(p.hero.key==="football"){
+    const missions=[
+      "войти на тренировочное поле и познакомиться с другом",
+      "посчитать игроков команды",
+      "выбрать цвет формы",
+      "добежать до ворот и посмотреть на поле",
+      "попить воды после тренировки",
+      "ответить тренеру на вопрос",
+      "рассказать другу о семье",
+      "найти ключ от раздевалки и карту поля",
+      "сказать другу первую фразу",
+      "сыграть первое учебное испытание"
+    ];
+    return missions[day-1];
+  }
+  if(p.hero.key==="magic"){
+    const missions=[
+      "открыть ворота школы дракона",
+      "посчитать магические печати",
+      "выбрать цвет кристалла",
+      "произнести действие-заклинание",
+      "попить воды после тренировки заклинаний",
+      "ответить хранителю на вопрос",
+      "рассказать другу о семье",
+      "найти ключ от башни и карту школы",
+      "сказать другу первую магическую фразу",
+      "пройти испытание дракона"
+    ];
+    return missions[day-1];
+  }
+  if(p.hero.key==="archaeology"){
+    const missions=[
+      "познакомиться в лагере экспедиции",
+      "посчитать древние камни",
+      "выбрать цвет отметок на карте",
+      "пойти к месту раскопок",
+      "попить воды после тренировки экспедиции",
+      "ответить на вопрос друга",
+      "рассказать о себе в дневнике",
+      "найти ключ и карту",
+      "сказать первую фразу в экспедиции",
+      "открыть первый древний сундук"
+    ];
+    return missions[day-1];
+  }
+  return `${h} в локации “${place}”: ${base.focus || goal}. ${c} помогает пройти задание дня ${day}.`;
+}
+function seededRandom(seed){
+  let x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+function shuffleStable(arr, seed){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(seededRandom(seed + i*17) * (i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function makeContextQuiz(base, day){
+  const w=base.words;
+  const makeOptions=(correct, wrongs, seed)=>shuffleStable([correct,...wrongs.filter(x=>x!==correct).slice(0,2)], seed);
+  return [
+    {
+      q:`Что означает фраза дня: ${base.target.hanzi}?`,
+      options:makeOptions(base.target.ru, ["Я иду домой.", "Ты мой учитель.", "До завтра."], day*100+1),
+      answer:base.target.ru
+    },
+    {
+      q:`Какое слово из урока значит “${w[0].ru}”?`,
+      options:makeOptions(w[0].hanzi, [w[1].hanzi, w[2].hanzi, w[3].hanzi], day*100+2),
+      answer:w[0].hanzi
+    },
+    {
+      q:`Какое конкретное слово из фразы дня нужно выбрать?`,
+      options:makeOptions(w[2].hanzi, [w[3].hanzi, w[4].hanzi, w[1].hanzi], day*100+3),
+      answer:w[2].hanzi
+    },
+    {
+      q:`Как читается ${w[3].hanzi}?`,
+      options:makeOptions(w[3].pinyin, [w[0].pinyin, w[1].pinyin, w[2].pinyin], day*100+4),
+      answer:w[3].pinyin
+    }
+  ];
 }
 function getDayData(day){
   if(state.dayData[day]) return state.dayData[day];
@@ -439,11 +547,9 @@ function getDayData(day){
       {who:"Китайский друг", cls:"friend", text:`你好! Сегодня тема: ${base.theme}. Скажи или выбери правильные слова, и мы продолжим миссию.`},
       {who:"Миссия", cls:"", text:generatedMission(day)}
     ],
-    quiz:[
-      {q:`День ${day}. Как переводится ${base.words[0].hanzi}?`, options:[base.words[0].ru, base.words[1].ru, "пока"], answer:base.words[0].ru},
-      {q:`Как читается ${base.words[1].hanzi}?`, options:[base.words[1].pinyin, base.words[2].pinyin, "nǐ hǎo"], answer:base.words[1].pinyin},
-      {q:`Что нужно сделать, чтобы сюжет продолжился?`, options:["пройти языковой пароль","пропустить урок","закрыть приложение"], answer:"пройти языковой пароль"}
-    ],
+    target:base.target,
+    focus:base.focus,
+    quiz:makeContextQuiz(base, day),
     selected:{}
   };
   state.dayData[day]=data; save(); return data;
@@ -507,13 +613,21 @@ function renderDay(day){
         <h2>День ${day}: ${h(data.theme)} ${data.aiGenerated?'<span class="pill">ИИ</span>':''}</h2>
         <p><span class="strong">Сцена:</span> ${h(data.scene)}</p>
         <p><span class="strong">Миссия:</span> ${h(data.mission)}</p>
+        <div class="lesson-goal">Главная фраза дня собирается из слов урока и связана с миссией: ${h(data.focus || '')}</div>
+        <div class="sentence-card">
+          <div class="small">Сначала послушай фразу дня целиком</div>
+          <div class="sentence-main">${h(data.target.hanzi)}</div>
+          <div class="pinyin">${h(data.target.pinyin)}</div>
+          <div class="sentence-ru">${h(data.target.ru)}</div>
+          <div class="btn-row">
+            <button class="secondary" onclick="speak('${h(data.target.audio || data.target.hanzi)}')">▶ Прослушать фразу дня целиком</button>
+          </div>
+        </div>
         <div class="dialogue">
           ${data.dialogue.map(b=>`<div class="bubble ${h(b.cls)}"><b>${h(b.who)}</b>${h(b.text)}</div>`).join("")}
         </div>
         <div class="btn-row">
-          <button class="secondary" onclick="speak('${data.words[0].hanzi}')">▶ Послушать первое слово</button>
-          <button class="blue" id="aiBtn" onclick="tryAiDay(${day})">Сгенерировать этот день через ИИ</button>
-          <button class="secondary" onclick="go('future')">Показать будущий голос/2D/3D</button>
+          <button class="secondary" onclick="speak('${h(data.target.audio || data.target.hanzi)}')">▶ Послушать фразу дня ещё раз</button>
         </div>
         <h3>Памятка тонов</h3>
         ${toneGuideHtml()}
