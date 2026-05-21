@@ -1,5 +1,5 @@
 
-const storageKey = "chineseQuestMvp.v14";
+const storageKey = "chineseQuestMvp.v23";
 let state = {
   profile:null,
   currentDay:1,
@@ -190,7 +190,7 @@ function loadSaved(){
   renderWorld(); go("world");
 }
 function save(){localStorage.setItem(storageKey,JSON.stringify(state));}
-function resetAll(){if(confirm("Сбросить прохождение MVP v14?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
+function resetAll(){if(confirm("Сбросить прохождение MVP v23?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
 function speak(text){
   if(!("speechSynthesis" in window)){alert("Браузер не поддерживает озвучку.");return;}
   speechSynthesis.cancel();
@@ -384,9 +384,9 @@ function roleProfile(){
   }
 
   // Свой герой: космонавт / астронавт / космос.
-  if(name.includes("космон") || name.includes("астро") || name.includes("космос") || name.includes("ракета")){
+  if(key === "cosmos" || name.includes("космон") || name.includes("астро") || name.includes("космос") || name.includes("ракета")){
     return {
-      key:"astronaut",
+      key:"cosmos",
       label:p.hero?.name || "космонавт",
       place:"китайская космическая станция",
       friendRole:"командир экипажа",
