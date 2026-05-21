@@ -190,7 +190,7 @@ function loadSaved(){
   renderWorld(); go("world");
 }
 function save(){localStorage.setItem(storageKey,JSON.stringify(state));}
-function resetAll(){if(confirm("Сбросить прохождение MVP v23?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
+function resetAll(){if(confirm("Сбросить прохождение MVP v24?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
 function speak(text){
   if(!("speechSynthesis" in window)){alert("Браузер не поддерживает озвучку.");return;}
   speechSynthesis.cancel();
@@ -979,7 +979,6 @@ function interactiveStageHtml(day, data, done){
         <div class="goal ${allCorrect?'open':''}"></div>
         <div class="castle">${h(config.destination || '')}</div>
         <div class="gate-label">${h(config.zone)}</div>
-        <div class="field-tag">Аватар в сцене: ${h(avatarLabel((state.profile||{}).avatar || 'boy'))}</div>
       </div>
       <div class="stage-checks">
         ${config.labels.map((label,i)=>`<div class="stage-check ${checks[i]?'done':''} ${wrong[i]?'bad':''}">${checks[i]?'✓':wrong[i]?'×':'•'} ${h(label)}</div>`).join('')}
@@ -1044,7 +1043,7 @@ function renderWorld(){
   document.getElementById("worldTitle").textContent=`${p.child}: путь “${p.hero.name}”`;
   document.getElementById("worldSub").textContent=`Локация: ${p.hero.place}. Напарник: ${p.companion}. Цель: ${p.hero.goal}.`;
   document.getElementById("profileChips").innerHTML=[
-    `Роль: ${p.hero.name}`,`Аватар: ${avatarLabel(p.avatar || 'boy')}`,`Напарник: ${p.companion}`,`Навык: ${p.hero.skill}`,p.interest?`Интерес: ${p.interest}`:"интерес не указан"
+    `Роль: ${p.hero.name}`,`Напарник: ${p.companion}`,`Навык: ${p.hero.skill}`,p.interest?`Интерес: ${p.interest}`:"интерес не указан"
   ].map(x=>`<span class="chip">${h(x)}</span>`).join("");
   const pct=Math.round((state.completedDays.length/10)*100);
   document.getElementById("progressBar").style.width=pct+"%";
@@ -1164,7 +1163,6 @@ function renderParent(){
     <div class="result">
       <b>Прогресс:</b> ${done}/10 дней<br>
       <b>Роль ребёнка:</b> ${h(p.hero.name)}<br>
-      <b>Аватар в сцене:</b> ${h(avatarLabel(p.avatar || 'boy'))}<br>
       <b>Напарник:</b> ${h(p.companion)}<br>
       <b>Что уже доказано MVP:</b> ребёнок видит, что его выбор влияет на сюжет, слова и миссии.
     </div>
