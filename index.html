@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Китайский квест — MVP v17 Parent Lesson Plan</title>
+  <title>Китайский квест — MVP v18 Parent Lesson Plan</title>
   <style>
     :root {
       --bg:#f6f0e8; --card:#fffaf4; --ink:#172033; --muted:#667085;
@@ -144,7 +144,7 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v17</span></div></div>
+      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v18</span></div></div>
       <span class="pill">10 дней · родительский план · футболист</span>
     </header>
 
@@ -152,7 +152,7 @@
       <div class="hero">
         <div class="card">
           <h1>Пройди 10 дней и проверь, как работает путь ребёнка</h1>
-          <p><span class="strong">Цель MVP v17:</span> разделить детский урок и родительский контроль: ребёнок видит игру, а родитель видит план дня, фразу и цель урока.</p>
+          <p><span class="strong">Цель MVP v18:</span> разделить детский урок и родительский контроль: ребёнок видит игру, а родитель видит план дня, фразу и цель урока.</p>
           <p>Сейчас это демо работает локально. В детской ветке оставляем игру и сцену, а подробное объяснение “что сегодня учим и зачем” переносим в кабинет родителя.</p><p><b>Важно:</b> если после обновления видишь старые вопросы, нажми “Сбросить тест” — браузер мог сохранить старое прохождение.</p>
           <div class="btn-row">
             <button onclick="go('profile')">Начать заново</button>
@@ -1362,8 +1362,6 @@ function renderDay(day){
         <div class="btn-row">
           <button class="secondary" onclick="speak('${h(data.target.audio || data.target.hanzi)}')">▶ Послушать фразу дня ещё раз</button>
         </div>
-        <h3>Памятка тонов</h3>
-        ${toneGuideHtml()}
       </div>
       <div>
         <h3>Слова дня</h3>
@@ -1382,6 +1380,10 @@ function renderDay(day){
         </div>
         <h3>Перед продолжением сюжета</h3>
         <div class="small">Порядок этих кнопок фиксированный на каждом дне: они больше не прыгают местами.</div>
+        <details class="tone-guide" style="margin:10px 0 12px">
+          <summary style="cursor:pointer;padding:10px 12px;font-weight:950">Памятка тонов</summary>
+          ${toneGuideHtml()}
+        </details>
         <div class="fixed-actions">
           <button class="good" onclick="finishDay(${day})">${done ? (day < 10 ? '1. Перейти к дню ' + (day + 1) : '1. Путь завершён') : '1. Пройти пароль'}</button>
           <button class="secondary" onclick="speak('${h(data.target.audio || data.target.hanzi)}')">2. Повторить фразу</button>

@@ -1070,8 +1070,6 @@ function renderDay(day){
         <div class="btn-row">
           <button class="secondary" onclick="speak('${h(data.target.audio || data.target.hanzi)}')">▶ Послушать фразу дня ещё раз</button>
         </div>
-        <h3>Памятка тонов</h3>
-        ${toneGuideHtml()}
       </div>
       <div>
         <h3>Слова дня</h3>
@@ -1090,6 +1088,10 @@ function renderDay(day){
         </div>
         <h3>Перед продолжением сюжета</h3>
         <div class="small">Порядок этих кнопок фиксированный на каждом дне: они больше не прыгают местами.</div>
+        <details class="tone-guide" style="margin:10px 0 12px">
+          <summary style="cursor:pointer;padding:10px 12px;font-weight:950">Памятка тонов</summary>
+          ${toneGuideHtml()}
+        </details>
         <div class="fixed-actions">
           <button class="good" onclick="finishDay(${day})">${done ? (day < 10 ? '1. Перейти к дню ' + (day + 1) : '1. Путь завершён') : '1. Пройти пароль'}</button>
           <button class="secondary" onclick="speak('${h(data.target.audio || data.target.hanzi)}')">2. Повторить фразу</button>
