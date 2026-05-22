@@ -107,14 +107,14 @@
     .midline{position:absolute;left:50%;top:0;bottom:0;width:3px;background:rgba(255,255,255,.55)}
     .circle-line{position:absolute;left:50%;top:50%;width:92px;height:92px;border:3px solid rgba(255,255,255,.55);border-radius:50%;transform:translate(-50%,-50%)}
     .goal{position:absolute;right:8px;top:78px;width:38px;height:94px;border:4px solid rgba(255,255,255,.9);border-right:0;border-radius:14px 0 0 14px;background:rgba(255,255,255,.12)}
-    .goal.open{box-shadow:0 0 0 999px rgba(255,255,255,.02),0 0 28px rgba(255,255,255,.65)}
-    .coach{position:absolute;left:28px;top:28px;width:80px;height:72px;border-radius:22px;background:rgba(255,255,255,.88);display:grid;place-items:center;text-align:center;font-weight:950;box-shadow:0 12px 30px rgba(0,0,0,.12)}
-    .coach span{display:block;font-size:28px;line-height:1}
-    .player{position:absolute;left:18%;top:136px;width:86px;height:86px;border-radius:26px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:950;box-shadow:0 15px 28px rgba(0,0,0,.18);transition:left .55s ease, top .55s ease, transform .55s ease}
-    .player-emoji{font-size:34px;line-height:1}
-    .player-name{font-size:11px;line-height:1.05;color:var(--ink);max-width:72px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .head-token{position:absolute;left:31%;top:174px;width:38px;height:38px;border-radius:50%;background:#fff4ea;border:3px solid rgba(23,32,51,.14);display:grid;place-items:center;font-size:21px;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:left .55s ease, top .55s ease, transform .55s ease}
-    .head-token:after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px dashed rgba(211,59,48,.25)}
+    .goal.open{box-shadow:none}
+    .coach{position:absolute;left:28px;top:28px;display:grid;place-items:center;text-align:left;font-weight:950;background:none;box-shadow:none;border:none;padding:0;width:auto;height:auto}
+    .coach span{display:block;font-size:30px;line-height:1}
+    .player{position:absolute;left:18%;top:136px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:950;background:none;box-shadow:none;border:none;padding:0;width:auto;height:auto;transition:left .55s ease, top .55s ease, transform .55s ease}
+    .player-emoji{font-size:42px;line-height:1;filter:none}
+    .player-name{font-size:11px;line-height:1.05;color:var(--ink);max-width:72px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:none}
+    .head-token{position:absolute;left:31%;top:174px;display:grid;place-items:center;font-size:30px;background:none;border:none;box-shadow:none;transition:left .55s ease, top .55s ease, transform .55s ease;width:auto;height:auto}
+    .head-token:after{display:none}
     .speech{position:absolute;left:122px;top:28px;max-width:270px;background:rgba(255,255,255,.92);border:1px solid rgba(23,32,51,.12);border-radius:18px;padding:10px 12px;font-weight:850;box-shadow:0 10px 24px rgba(0,0,0,.10)}
     .gate-label{position:absolute;right:56px;top:88px;background:rgba(255,255,255,.92);border-radius:16px;padding:9px 10px;font-weight:950;font-size:13px;text-align:center}
     .field-tag{position:absolute;left:24px;bottom:16px;background:rgba(255,255,255,.9);border-radius:16px;padding:8px 10px;font-size:12px;font-weight:900;color:var(--ink)}
@@ -136,53 +136,130 @@
     .field.magic-road{background:linear-gradient(180deg,#92d7ff 0 44%,#8bd273 44% 100%)}
     .field.magic-road:before{content:"";position:absolute;left:-24px;right:-24px;bottom:-12px;height:164px;background:linear-gradient(180deg,#f4d49a,#c99054);clip-path:polygon(0 88%,24% 68%,42% 56%,58% 48%,76% 32%,100% 14%,100% 62%,78% 78%,58% 90%,34% 100%,0 100%);opacity:.95}
     .field.magic-road .midline,.field.magic-road .circle-line,.field.magic-road .goal{display:none}
-    .castle{display:none;position:absolute;right:12px;top:28px;font-size:74px;filter:drop-shadow(0 16px 18px rgba(0,0,0,.22));z-index:2}
+    .castle{display:none;position:absolute;right:12px;top:28px;font-size:74px;filter:none;z-index:2}
     .field.magic-road .castle{display:block}
     .field.magic-road .gate-label{right:22px;top:112px;background:rgba(255,255,255,.94)}
-    .field.magic-road .coach{left:24px;top:24px;background:rgba(255,255,255,.9)}
+    .field.magic-road .coach{left:18px;top:18px;background:rgba(255,255,255,.22);border-radius:14px;padding:6px 10px}
     .field.magic-road .speech{left:118px;top:24px;max-width:300px}
     .field.magic-road .field-tag{left:22px;bottom:14px}
     .field.magic-road .player{left:12%;top:160px;z-index:3}
-    .field.magic-road .head-token{left:24%;top:184px;z-index:4;background:#fff2fb}
+    .field.magic-road .head-token{left:24%;top:184px;z-index:4;background:none}
     .field.magic-road.stage-step-1 .player{left:32%;top:136px;transform:translateY(-4px)}
     .field.magic-road.stage-step-1 .head-token{left:43%;top:154px;transform:rotate(5deg)}
     .field.magic-road.stage-step-2 .player{left:53%;top:112px;transform:translateY(-8px)}
     .field.magic-road.stage-step-2 .head-token{left:63%;top:126px;transform:rotate(-5deg)}
     .field.magic-road.stage-step-3 .player{left:73%;top:88px;transform:translateY(-10px) scale(1.04)}
     .field.magic-road.stage-step-3 .head-token{left:84%;top:104px;transform:scale(1.1)}
-    .field.magic-road .head-token:after{border-color:rgba(116,57,170,.34)}
+    .field.magic-road .head-token:after{display:none}
+    .field.desert-path{background:linear-gradient(180deg,#8ed8ff 0 42%,#f4d696 42% 100%)}
+    .field.desert-path:before{content:"";position:absolute;left:-20px;right:-20px;bottom:-10px;height:170px;background:linear-gradient(180deg,#f0cf8a,#d7a85d);clip-path:polygon(0 88%,14% 80%,28% 74%,42% 64%,58% 58%,70% 48%,82% 36%,92% 26%,100% 22%,100% 100%,0 100%);opacity:.98}
+    .field.desert-path:after{display:none}
+    .field.desert-path .midline,.field.desert-path .circle-line,.field.desert-path .goal{display:none}
+    .field.desert-path .castle{display:block;right:28px;top:82px;font-size:84px;filter:none;z-index:4}
+    .field.desert-path .gate-label{right:10px;top:214px;background:none;border:none;box-shadow:none;padding:0;width:150px;text-align:center;color:#5a3512;font-weight:950;line-height:1.05;z-index:8}
+    .field.desert-path .coach{left:18px;top:18px;background:rgba(255,245,220,.35);border-radius:14px;padding:6px 10px;color:#4f3114;text-shadow:none;z-index:6;max-width:110px}
+    .field.desert-path .coach span{font-size:28px}
+    .field.desert-path .coach div{display:flex;align-items:center;gap:6px;font-size:13px;line-height:1.05;flex-wrap:wrap}
+    .field.desert-path .speech{left:150px;top:20px;max-width:210px;background:rgba(255,250,240,.72);border-radius:18px;padding:10px 14px;box-shadow:none;color:#4d2d11;z-index:7;line-height:1.2;text-shadow:none}
+    .field.desert-path .field-tag{display:none}
+    .field.desert-path .head-token{display:none}
+    .field.desert-path .ship,.field.desert-path .rope{display:none}
+    .field.desert-path .player{left:12%;top:162px;z-index:7;color:#352112;width:120px;height:96px}
+    .field.desert-path .player-emoji{font-size:54px;line-height:1}
+    .field.desert-path .player-name{display:none}
+    .field.desert-path .player.role-archaeology .camel-emoji{position:absolute;left:0;top:14px;font-size:74px;line-height:1;transform:scaleX(-1);z-index:2;filter:drop-shadow(0 2px 0 rgba(255,255,255,.10))}
+    .field.desert-path .player.role-archaeology .arch-rider-simple{position:absolute;left:42px;top:14px;width:26px;height:34px;z-index:4}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-head{position:absolute;left:7px;top:5px;width:13px;height:13px;border-radius:50%;background:#f6c57c;z-index:3}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-hair{position:absolute;left:5px;top:1px;width:17px;height:9px;border-radius:10px 10px 6px 6px;background:#d88413;z-index:4}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-body{position:absolute;left:8px;top:17px;width:11px;height:12px;border-radius:6px;background:#4f8de4;z-index:2}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-arm{position:absolute;top:19px;width:9px;height:3px;border-radius:999px;background:#f6c57c;z-index:2}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-arm.left{left:1px;transform:rotate(12deg)}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-arm.right{right:1px;transform:rotate(-22deg)}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-leg{position:absolute;top:27px;width:3px;height:12px;border-radius:999px;background:#304d7d;z-index:1}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-leg.left{left:10px;transform:rotate(18deg)}
+    .field.desert-path .player.role-archaeology .arch-rider-simple .rider-leg.right{left:16px;transform:rotate(-16deg)}
+    .field.desert-path .player.role-archaeology .arch-rider-simple.girl .rider-body{background:#c96cc8}
+    .field.desert-path .player.role-archaeology .arch-rider-simple.girl .rider-hair{background:#7b4d2f}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    .field.desert-path .player.role-archaeology::before{display:none}
+    .field.desert-path .player.role-archaeology .player-emoji{display:none}
+    .field.desert-path.stage-step-1 .player{left:23%;top:160px;transform:translateY(-4px)}
+    .field.desert-path.stage-step-2 .player{left:36%;top:150px;transform:translateY(-6px)}
+    .field.desert-path.stage-step-3 .player{left:50%;top:146px;transform:translateY(-4px) scale(.98)}
+    .field.desert-path.stage-step-3 .player:after{display:none}
     .field.space-tether{background:radial-gradient(circle at 22% 18%,rgba(255,255,255,.95) 0 2px,transparent 3px),radial-gradient(circle at 58% 30%,rgba(255,255,255,.8) 0 2px,transparent 3px),radial-gradient(circle at 80% 18%,rgba(255,255,255,.9) 0 2px,transparent 3px),linear-gradient(180deg,#0f2248 0%,#142f66 45%,#08152f 100%)}
     .field.space-tether:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 22%,rgba(255,255,255,.08),transparent 20%),radial-gradient(circle at 18% 78%,rgba(81,196,255,.10),transparent 24%)}
     .field.space-tether .midline,.field.space-tether .circle-line,.field.space-tether .goal{display:none}
-    .ship{display:none;position:absolute;right:18px;top:68px;width:118px;height:86px;border-radius:26px;background:linear-gradient(180deg,#eef5ff,#c9d9f3);border:3px solid rgba(255,255,255,.7);box-shadow:0 14px 28px rgba(0,0,0,.25);z-index:3}
-    .ship:before{content:"";position:absolute;left:14px;right:14px;top:18px;height:22px;border-radius:14px;background:linear-gradient(180deg,#8dc8ff,#5ba0e6)}
-    .ship:after{content:"🚀";position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:28px}
-    .ship-door{position:absolute;right:8px;top:22px;width:32px;height:42px;border-radius:12px;background:rgba(24,42,74,.8);border:2px solid rgba(255,255,255,.55)}
+    .ship{display:none;position:absolute;right:18px;top:124px;width:228px;height:82px;border-radius:50%;background:linear-gradient(180deg,#d7e4f8 0%,#a7bce0 48%,#718dbd 100%);border:2px solid rgba(231,242,255,.68);box-shadow:0 12px 26px rgba(4,12,28,.28);z-index:3;overflow:visible}
+    .ship:before{content:"";position:absolute;left:64px;top:-18px;width:98px;height:42px;border-radius:50% 50% 42% 42%;background:linear-gradient(180deg,#94d2ff,#5895dd);box-shadow:inset 0 -3px 0 rgba(255,255,255,.28),0 0 0 2px rgba(255,255,255,.12)}
+    .ship:after{content:"";position:absolute;left:18px;right:18px;bottom:-10px;height:18px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(116,226,255,.38) 0%,rgba(116,226,255,.14) 45%,rgba(116,226,255,0) 70%);filter:blur(2px)}
+    .ship-door{position:absolute;left:95px;top:-7px;width:38px;height:18px;border-radius:50%;background:linear-gradient(180deg,#203455,#162742);border:2px solid rgba(225,240,255,.72);box-shadow:0 4px 10px rgba(8,18,38,.25)}
     .rope{display:none;position:absolute;height:4px;background:linear-gradient(90deg,#e5eef8,#b8cadf);border-radius:999px;box-shadow:0 0 0 1px rgba(255,255,255,.22)}
     .field.space-tether .ship,.field.space-tether .rope{display:block}
     .field.space-tether .castle,.field.space-tether .goal,.field.space-tether .head-token{display:none}
-    .field.space-tether .coach{left:18px;top:18px;background:rgba(255,255,255,.92)}
-    .field.space-tether .speech{left:114px;top:18px;max-width:300px}
-    .field.space-tether .player{left:8%;top:138px;background:rgba(255,255,255,.96);z-index:4}
-    .field.space-tether .player-emoji{font-size:32px}
-    .field.space-tether .gate-label{right:18px;top:162px;background:rgba(255,255,255,.94)}
-    .field.space-tether .field-tag{left:18px;bottom:14px}
-    .field.space-tether.stage-step-0 .player{left:10%;top:144px}
-    .field.space-tether.stage-step-0 .rope{left:22%;top:178px;width:60%}
-    .field.space-tether.stage-step-1 .player{left:30%;top:134px;transform:translateY(-4px)}
-    .field.space-tether.stage-step-1 .rope{left:42%;top:168px;width:40%}
-    .field.space-tether.stage-step-2 .player{left:52%;top:120px;transform:translateY(-8px)}
-    .field.space-tether.stage-step-2 .rope{left:64%;top:154px;width:20%}
-    .field.space-tether.stage-step-3 .player{left:78%;top:86px;transform:scale(.94)}
-    .field.space-tether.stage-step-3 .rope{left:82%;top:116px;width:6%;opacity:.35}
-    .field.space-tether.stage-step-3 .player:after{content:"в корабле";position:absolute;left:-2px;right:-2px;bottom:-18px;font-size:10px;color:white;font-weight:900;text-align:center}
+    .field.space-tether .coach{left:16px;top:20px;background:none;color:#f5f9ff;text-shadow:0 2px 10px rgba(0,0,0,.72);z-index:7;max-width:96px}
+    .field.space-tether .speech{left:146px;top:12px;max-width:190px;background:rgba(255,255,255,.97);color:#12233f;z-index:8;padding:10px 12px;border-radius:18px;line-height:1.28}
+    .field.space-tether .player{left:7%;top:148px;background:none;z-index:5;color:#f3f8ff}
+    .field.space-tether .player-emoji{font-size:54px;line-height:1}
+    .field.space-tether .gate-label{display:none}
+    .field.space-tether .field-tag{display:none}
+    .field.space-tether.stage-step-0 .player{left:10%;top:154px}
+    .field.space-tether.stage-step-0 .rope{left:24%;top:196px;width:58%}
+    .field.space-tether.stage-step-1 .player{left:30%;top:148px;transform:translateY(-4px)}
+    .field.space-tether.stage-step-1 .rope{left:43%;top:188px;width:36%}
+    .field.space-tether.stage-step-2 .player{left:52%;top:132px;transform:translateY(-8px)}
+    .field.space-tether.stage-step-2 .rope{left:63%;top:170px;width:16%}
+    .field.space-tether.stage-step-3 .player{left:67%;top:84px;transform:scale(.74)}
+    .field.space-tether.stage-step-3 .rope{left:70%;top:118px;width:6%;opacity:.12}
+    .field.space-tether.stage-step-3 .player:after{content:"внутри тарелки";position:absolute;left:-14px;right:-14px;bottom:-18px;font-size:10px;color:#f4f8ff;font-weight:900;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.8)}
     .field.space-tether .ship{animation:shipGlow 2.2s ease-in-out infinite}
     .field.space-tether .rope{transform-origin:right center;animation:ropePulse 1.1s ease-in-out infinite}
     .field.space-tether .player{animation:astronautFloat 2.4s ease-in-out infinite}
     .field.space-tether.stage-step-1 .player,.field.space-tether.stage-step-2 .player{animation:astronautPull 1.2s ease-in-out infinite}
     .field.space-tether.stage-step-3 .player{animation:astronautDock .85s ease-out forwards}
     .field.space-tether.stage-step-3 .ship{animation:shipOpen .9s ease-out forwards, shipGlow 2.2s ease-in-out infinite}
-    .field.space-tether.stage-step-3 .ship-door{background:linear-gradient(180deg,#74e2ff,#3b82f6);box-shadow:0 0 22px rgba(116,226,255,.9)}
+    .field.space-tether.stage-step-3 .ship-door{background:linear-gradient(180deg,#74e2ff,#3b82f6);box-shadow:0 0 16px rgba(116,226,255,.45)}
     .field.space-tether.stage-step-3 .rope{animation:none;opacity:.25}
     @keyframes ropePulse{0%,100%{filter:brightness(1);transform:scaleX(1)}50%{filter:brightness(1.55);transform:scaleX(.96)}}
     @keyframes astronautFloat{0%,100%{margin-top:0}50%{margin-top:-8px}}
@@ -195,13 +272,28 @@
     .stage-check.done{background:rgba(22,155,98,.12);border-color:rgba(22,155,98,.35);color:var(--green)}
     .stage-check.bad{background:rgba(180,35,24,.08);border-color:rgba(180,35,24,.25);color:var(--bad)}
 
-    @media(max-width:880px){.hero,.lesson{grid-template-columns:1fr}.grid,.grid3,.word-list,.fixed-actions{grid-template-columns:1fr}.timeline{grid-template-columns:repeat(5,1fr)}h1{font-size:32px}.tone-row{grid-template-columns:1fr}}
+    .field.space-tether .player-name{color:#f2f7ff;text-shadow:0 2px 8px rgba(0,0,0,.82);margin-top:-2px;background:none}
+    .field.space-tether .coach div{font-size:12px;line-height:1.05;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .field.space-tether .ship-door:before{display:none}
+    .field.space-tether .ship-door:after{display:none}
+    .ship-body-line{position:absolute;left:26px;right:26px;bottom:16px;height:10px;border-radius:999px;background:rgba(255,255,255,.18)}
+    .ship-window{position:absolute;top:42px;width:16px;height:16px;border-radius:50%;background:rgba(130,211,255,.95);box-shadow:inset 0 -2px 0 rgba(255,255,255,.28),0 0 0 2px rgba(255,255,255,.15)}
+    .ship-window.w1{left:56px}
+    .ship-window.w2{left:106px}
+    .ship-window.w3{left:156px}
+    .ufo-hatch-ring{position:absolute;left:91px;top:-12px;width:46px;height:24px;border-radius:50%;border:2px solid rgba(233,244,255,.72);background:rgba(19,36,63,.24)}
+    .ufo-hatch-lid{position:absolute;left:93px;top:-18px;width:42px;height:16px;border-radius:50%;background:linear-gradient(180deg,#9cc5eb,#6f95c4);transform-origin:center bottom;box-shadow:0 4px 8px rgba(7,18,38,.22)}
+    .field.space-tether.stage-step-3 .ufo-hatch-lid{transform:rotateX(0deg) translateY(6px);opacity:1}
+    .field.space-tether:not(.stage-step-3) .ufo-hatch-lid{transform:translateY(-2px) rotate(-16deg);opacity:.98}
+    .field.space-tether.stage-step-3 .player{opacity:.18}
+
+    @media(max-width:880px){.hero,.lesson{grid-template-columns:1fr}.grid,.grid3,.word-list,.fixed-actions{grid-template-columns:1fr}.timeline{grid-template-columns:repeat(5,1fr)}h1{font-size:32px}.tone-row{grid-template-columns:1fr}.field.space-tether .speech{left:110px;top:10px;max-width:170px}.field.space-tether .coach{top:18px;max-width:86px}.field.desert-path .speech{left:122px;top:18px;max-width:170px;padding:8px 10px}.field.desert-path .coach{max-width:88px;padding:5px 8px}.field.desert-path .gate-label{right:8px;top:220px;width:120px;font-size:12px}.field.desert-path.stage-step-3 .player{left:44%;top:148px}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v24</span></div></div>
+      <div class="logo"><div class="logo-badge">中</div><div>Китайский квест <span style="color:var(--muted)">MVP v38</span></div></div>
       <span class="pill">10 дней · космонавт с тросом · анимация</span>
     </header>
 
@@ -539,7 +631,7 @@ function loadSaved(){
   renderWorld(); go("world");
 }
 function save(){localStorage.setItem(storageKey,JSON.stringify(state));}
-function resetAll(){if(confirm("Сбросить прохождение MVP v24?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
+function resetAll(){if(confirm("Сбросить прохождение MVP v38?")){localStorage.removeItem(storageKey);state={profile:null,currentDay:1,completedDays:[],dayData:{}};go("start");}}
 function speak(text){
   if(!("speechSynthesis" in window)){alert("Браузер не поддерживает озвучку.");return;}
   speechSynthesis.cancel();
@@ -580,6 +672,14 @@ function getChildAvatar(){
 
 function avatarEmoji(kind){
   return kind === "girl" ? "👧" : "👦";
+}
+
+function sceneCharacterEmoji(roleKey, kind){
+  if(roleKey === "cosmos" || roleKey === "astronaut") return kind === "girl" ? "👩‍🚀" : "👨‍🚀";
+  if(roleKey === "magic") return kind === "girl" ? "🧙‍♀️" : "🧙‍♂️";
+  if(roleKey === "football") return kind === "girl" ? "👧" : "👦";
+  if(roleKey === "archaeology") return kind === "girl" ? "👧" : "👦";
+  return avatarEmoji(kind);
 }
 
 function avatarLabel(kind){
@@ -1274,18 +1374,34 @@ function interactiveSceneConfig(day, rp){
     return {...magicConfigs[day], stageClass:"magic-road", guideEmoji:"🧙", guideName:"Хранитель", destination:"🏰"};
   }
 
+  if(rp.key === "archaeology"){
+    const archaeologyConfigs = {
+      1:{title:"Интерактивная сцена: путь к пирамиде", intro:"Археолог идёт по тропинке через пустыню. Каждый правильный ответ продвигает его ближе к пирамиде.", zone:"вход в пирамиду", labels:["1. Поздороваться: 你好","2. Понять фразу: 我是朋友","3. Дойти до пирамиды"], speeches:["Скажи 你好, чтобы начать путь.","Отлично! Археолог уже ближе к пирамиде.","Остался последний шаг — и сцена откроется."], success:"Археолог доходит до пирамиды и готов войти внутрь."},
+      2:{title:"Интерактивная сцена: счёт в пустыне", intro:"Археолог считает следы на песке и движется дальше по тропинке.", zone:"камни у тропы", labels:["1. Найти число 三","2. Понять слово 我们","3. Продвинуться вперёд"], speeches:["Посчитай следы на песке.","Хорошо, путь продолжается.","Ещё один ответ — и археолог пойдёт дальше."], success:"Археолог проходит ещё один участок пустыни."},
+      3:{title:"Интерактивная сцена: карта экспедиции", intro:"Археолог вспоминает цвет карты, чтобы не сбиться с пути.", zone:"тропинка к пирамиде", labels:["1. Найти 蓝色","2. Узнать 地图","3. Подтвердить карту"], speeches:["Выбери правильный цвет карты.","Теперь вспомни слово 地图.","Последний ответ — и путь станет яснее."], success:"Археолог сверяется с картой и продолжает идти к пирамиде."},
+      4:{title:"Интерактивная сцена: движение по пустыне", intro:"Археолог двигается по тропинке и приближается к древней пирамиде.", zone:"поворот тропы", labels:["1. Найти 走 / идти","2. Найти 说","3. Дойти до поворота"], speeches:["Начни движение по тропинке.","Отлично, археолог уже ближе.","Последний ответ — и поворот пройден."], success:"Археолог проходит поворот и видит пирамиду ещё ближе."},
+      5:{title:"Интерактивная сцена: отдых в лагере", intro:"После пути по пустыне археолог вспоминает полезные слова и идёт к лагерю.", zone:"палатка лагеря", labels:["1. Собрать 喝 + 水","2. Узнать 探险","3. Вернуться в лагерь"], speeches:["Вспомни, как сказать “пить воду”.","Хорошо, лагерь уже близко.","Ещё один ответ — и археолог дойдёт до палатки."], success:"Археолог возвращается в лагерь и отдыхает после пути."},
+      6:{title:"Интерактивная сцена: вопрос проводника", intro:"Проводник спрашивает, где находится нужное место, а археолог идёт по тропе.", zone:"древние ворота", labels:["1. Найти 哪里","2. Найти место","3. Ответить проводнику"], speeches:["Сначала пойми вопрос проводника.","Отлично, место найдено.","Последний ответ — и археолог продолжит путь."], success:"Археолог понимает вопрос и движется к древним воротам."},
+      7:{title:"Интерактивная сцена: рассказ у пирамиды", intro:"Археолог рассказывает о себе, пока идёт к пирамиде по песчаной тропе.", zone:"подножие пирамиды", labels:["1. Найти 中文","2. Найти 喜欢","3. Сказать о себе"], speeches:["Расскажи, что тебе нравится.","Хорошо, путь продолжается.","Последний ответ — и археолог почти у пирамиды."], success:"Археолог заканчивает рассказ и подходит к пирамиде."},
+      8:{title:"Интерактивная сцена: найти карту", intro:"Археолог ищет важную карту и идёт к месту раскопок.", zone:"место раскопок", labels:[`1. Найти ${rp.objectHanzi || '地图'}`,"2. Найти 钥匙","3. Открыть сундук"], speeches:["Найди важный предмет экспедиции.","Теперь нужен ключ.","Последний ответ — и сундук откроется."], success:"Археолог находит карту и подходит к месту раскопок."},
+      9:{title:"Интерактивная сцена: мини-диалог", intro:"Перед входом в пирамиду археолог говорит короткую фразу проводнику.", zone:"вход в пирамиду", labels:["1. Найти 我的","2. Найти 朋友","3. Завершить диалог"], speeches:["Скажи фразу проводнику.","Осталось слово 朋友.","Последний ответ — и вход готов."], success:"Проводник отвечает, и археолог подходит ко входу в пирамиду."},
+      10:{title:"Интерактивная сцена: финальный путь", intro:"Финальный шаг первого блока: археолог должен дойти до пирамиды и открыть вход.", zone:"пирамида открыта", labels:["1. Найти 加油","2. Найти 今天","3. Открыть вход"], speeches:["Финальный шаг к пирамиде!","Отлично, ты почти у цели.","Последний ответ — и вход откроется."], success:"Археолог доходит до пирамиды и открывает вход в древний мир."}
+    };
+    return {...archaeologyConfigs[day], stageClass:"desert-path", guideEmoji:"🧭", guideName:"Проводник", destination:"🛕"};
+  }
+
   if(rp.key === "cosmos" || rp.key === "astronaut"){
     const cosmosConfigs = {
-      1:{title:"Интерактивная сцена: путь к кораблю", intro:"Космонавт в открытом космосе привязан к кораблю страховочной верёвкой. Трос пульсирует и после каждого правильного ответа подтягивает его ближе.", zone:"люк корабля", labels:["1. Поздороваться: 你好","2. Понять фразу: 我是朋友","3. Вернуться в корабль"], speeches:["Скажи 你好, чтобы трос начал подтягивать космонавта.","Хорошо! Корабль уже ближе.","Последний ответ — и космонавт окажется внутри корабля."], success:"Космонавт втягивается по страховочному тросу, люк подсвечивается, и герой оказывается в корабле."},
-      2:{title:"Интерактивная сцена: счёт в космосе", intro:"Космонавт считает сигнальные огни и медленно возвращается к кораблю.", zone:"стыковочный модуль", labels:["1. Найти число 三","2. Понять слово 我们","3. Подтянуться к модулю"], speeches:["Посчитай огни на корпусе корабля.","Отлично! Связь с экипажем восстановлена.","Ещё один ответ — и трос подтянет космонавта к модулю."], success:"Космонавт подлетает к стыковочному модулю и держится рядом с кораблём."},
-      3:{title:"Интерактивная сцена: цвет скафандра", intro:"Нужно вспомнить цвет части скафандра, пока трос тянет космонавта домой.", zone:"борт рядом", labels:["1. Найти 蓝色","2. Узнать 宇航服","3. Подтвердить скафандр"], speeches:["Выбери правильный цвет детали скафандра.","Теперь вспомни слово 宇航服.","Последний ответ — и космонавт почти у люка."], success:"Космонавт проверяет скафандр и оказывается совсем рядом с бортом."},
-      4:{title:"Интерактивная сцена: движение к люку", intro:"Космонавт делает движения в невесомости, а трос подтягивает его к люку.", zone:"люк близко", labels:["1. Найти 跑 / двигаться","2. Найти 说","3. Подтянуться к люку"], speeches:["Начни движение к кораблю.","Хорошо, связь с экипажем есть.","Последний ответ — и космонавт почти коснётся люка."], success:"Космонавт касается люка и готов войти внутрь."},
-      5:{title:"Интерактивная сцена: вода после выхода", intro:"После выхода в космос герой вспоминает полезные слова и возвращается к отсеку отдыха.", zone:"отсек отдыха", labels:["1. Собрать 喝 + 水","2. Узнать 训练 / 活动","3. Вернуться в отсек"], speeches:["Вспомни, как сказать “пить воду”.","Хорошо, отсек уже рядом.","Ещё один ответ — и космонавт внутри отсека."], success:"Космонавт возвращается в отсек и получает воду."},
-      6:{title:"Интерактивная сцена: вопрос от экипажа", intro:"Экипаж спрашивает, где находится космонавт, пока трос тянет его к борту.", zone:"центр корабля", labels:["1. Найти 哪里","2. Найти место","3. Ответить экипажу"], speeches:["Сначала пойми вопрос экипажа.","Отлично, позиция найдена.","Последний ответ — и космонавт почти внутри."], success:"Экипаж получает ответ, и космонавт возвращается на борт."},
-      7:{title:"Интерактивная сцена: рассказ на связи", intro:"Космонавт рассказывает о себе по связи, пока медленно приближается к кораблю.", zone:"связь установлена", labels:["1. Найти 中文","2. Найти 喜欢","3. Сказать о себе"], speeches:["Расскажи что тебе нравится.","Связь стала лучше.","Последний ответ — и космонавт у входа в корабль."], success:"Космонавт завершает рассказ и приближается к шлюзу."},
-      8:{title:"Интерактивная сцена: найти предмет", intro:"Космонавт ищет важный предмет и по тросу подтягивается к отсеку с оборудованием.", zone:"отсек открыт", labels:[`1. Найти ${rp.objectHanzi || '地图'}`,"2. Найти 钥匙","3. Открыть отсек"], speeches:["Найди важный предмет экипажа.","Теперь нужен ключ доступа.","Последний ответ — и отсек откроется."], success:"Космонавт открывает отсек оборудования и держится у корабля."},
-      9:{title:"Интерактивная сцена: мини-диалог с экипажем", intro:"Перед входом в корабль космонавт говорит короткую фразу экипажу.", zone:"экипаж ждёт", labels:["1. Найти 我的","2. Найти 朋友","3. Завершить диалог"], speeches:["Скажи фразу экипажу.","Осталось слово 朋友.","Последний ответ — и вход готов."], success:"Экипаж отвечает космонавту, и вход в корабль открыт."},
-      10:{title:"Интерактивная сцена: возвращение на борт", intro:"Финальный шаг первого блока: космонавт должен вернуться в корабль целиком.", zone:"корабль открыт", labels:["1. Найти 加油","2. Найти 今天","3. Вернуться в корабль"], speeches:["Финальный рывок к кораблю!","Отлично, ты почти внутри.","Последний ответ — и космонавт возвращается на борт."], success:"Космонавт полностью возвращается в корабль, и первый блок завершён."}
+      1:{title:"Интерактивная сцена: путь к тарелке", intro:"Космонавт в открытом космосе привязан к тарелке страховочной верёвкой. Каждый правильный ответ подтягивает его ближе.", zone:"верхний люк", labels:["1. Поздороваться: 你好","2. Понять фразу: 我是朋友","3. Войти в тарелку"], speeches:["Скажи 你好, чтобы трос начал подтягивать космонавта.","Отлично! Тарелка уже совсем близко.","Последний ответ — и космонавт сядет внутрь тарелки."], success:"Космонавт подлетает к тарелке, садится внутрь, и верхний люк закрывается."},
+      2:{title:"Интерактивная сцена: счёт в космосе", intro:"Космонавт считает сигнальные огни и медленно возвращается к тарелке.", zone:"нижний отсек", labels:["1. Найти число 三","2. Понять слово 我们","3. Подтянуться ближе"], speeches:["Посчитай огни на корпусе тарелки.","Отлично! Связь с центром восстановлена.","Ещё один ответ — и трос подтянет космонавта ближе к тарелке."], success:"Космонавт подлетает к нижнему отсеку и удерживается рядом с тарелкой."},
+      3:{title:"Интерактивная сцена: цвет скафандра", intro:"Нужно вспомнить цвет части скафандра, пока трос тянет космонавта домой.", zone:"тарелка рядом", labels:["1. Найти 蓝色","2. Узнать 宇航服","3. Подтвердить скафандр"], speeches:["Выбери правильный цвет детали скафандра.","Теперь вспомни слово 宇航服.","Последний ответ — и космонавт почти у верхнего люка."], success:"Космонавт проверяет скафандр и оказывается совсем рядом с тарелкой."},
+      4:{title:"Интерактивная сцена: движение к люку", intro:"Космонавт двигается в невесомости, а трос подтягивает его к верхнему люку.", zone:"люк рядом", labels:["1. Найти 飞 / лететь","2. Найти 说","3. Подтянуться к люку"], speeches:["Начни движение к тарелке.","Хорошо, связь с центром есть.","Последний ответ — и космонавт почти коснётся люка."], success:"Космонавт касается люка и готов войти внутрь."},
+      5:{title:"Интерактивная сцена: вода после выхода", intro:"После выхода в космос герой вспоминает полезные слова и возвращается к отсеку отдыха.", zone:"отсек отдыха", labels:["1. Собрать 喝 + 水","2. Узнать 活动","3. Вернуться в отсек"], speeches:["Вспомни, как сказать “пить воду”.","Хорошо, отсек уже рядом.","Ещё один ответ — и космонавт окажется внутри отсека."], success:"Космонавт возвращается в отсек отдыха и получает воду."},
+      6:{title:"Интерактивная сцена: вопрос от центра связи", intro:"Центр связи спрашивает, где находится космонавт, пока трос тянет его к тарелке.", zone:"центр тарелки", labels:["1. Найти 哪里","2. Найти место","3. Ответить центру"], speeches:["Сначала пойми вопрос центра связи.","Отлично, позиция найдена.","Последний ответ — и космонавт почти внутри."], success:"Центр связи получает ответ, и космонавт возвращается на борт."},
+      7:{title:"Интерактивная сцена: рассказ на связи", intro:"Космонавт рассказывает о себе по связи, пока медленно приближается к тарелке.", zone:"связь установлена", labels:["1. Найти 中文","2. Найти 喜欢","3. Сказать о себе"], speeches:["Расскажи, что тебе нравится.","Связь стала лучше.","Последний ответ — и космонавт у входа в тарелку."], success:"Космонавт завершает рассказ и приближается к верхнему люку."},
+      8:{title:"Интерактивная сцена: найти предмет", intro:"Космонавт ищет важный предмет и по тросу подтягивается к отсеку с оборудованием.", zone:"отсек открыт", labels:[`1. Найти ${rp.objectHanzi || '火箭'}`,"2. Найти 钥匙","3. Открыть отсек"], speeches:["Найди важный предмет экипажа.","Теперь нужен ключ доступа.","Последний ответ — и отсек откроется."], success:"Космонавт открывает отсек оборудования и держится рядом с тарелкой."},
+      9:{title:"Интерактивная сцена: мини-диалог с экипажем", intro:"Перед входом в тарелку космонавт говорит короткую фразу экипажу.", zone:"экипаж ждёт", labels:["1. Найти 我的","2. Найти 朋友","3. Завершить диалог"], speeches:["Скажи фразу экипажу.","Осталось слово 朋友.","Последний ответ — и вход готов."], success:"Центр связи отвечает космонавту, и вход в тарелку открыт."},
+      10:{title:"Интерактивная сцена: возвращение на борт", intro:"Финальный шаг первого блока: космонавт должен вернуться в тарелку целиком.", zone:"люк открыт", labels:["1. Найти 加油","2. Найти 今天","3. Вернуться в тарелку"], speeches:["Финальный рывок к тарелке!","Отлично, ты почти внутри.","Последний ответ — и космонавт возвращается домой."], success:"Космонавт полностью возвращается в тарелку, и первый блок завершён."}
     };
     return {...cosmosConfigs[day], stageClass:"space-tether", guideEmoji:"🛰️", guideName:"Центр связи", destination:""};
   }
@@ -1315,7 +1431,8 @@ function interactiveStageHtml(day, data, done){
   const correctCount = checks.filter(Boolean).length;
   const hasWrong = wrong.some(Boolean);
   const allCorrect = checks.every(Boolean);
-  const avatar = avatarEmoji((state.profile||{}).avatar || 'boy');
+  const avatarKind = (state.profile||{}).avatar || 'boy';
+  const avatar = sceneCharacterEmoji(rp.key, avatarKind);
   const child = state.profile?.child || 'Герой';
   const speech = allCorrect
     ? "太好了！Tài hǎo le! Сцена открыта!"
@@ -1339,18 +1456,18 @@ function interactiveStageHtml(day, data, done){
         <div class="midline"></div><div class="circle-line"></div>
         <div class="coach"><div><span>${h(config.guideEmoji || '🧢')}</span>${h(config.guideName || 'Тренер')}</div></div>
         <div class="speech">${h(speech)}</div>
-        <div class="player" title="герой-ребёнок"><div class="player-emoji">${avatar}</div><div class="player-name">${h(child)}</div></div>
+        <div class="player role-${h(rp.key)}" data-rider="${avatarEmoji(avatarKind)}" title="герой-ребёнок">${rp.key === 'archaeology' ? `<div class="camel-emoji">🐫</div><div class="arch-rider-simple ${avatarKind === 'girl' ? 'girl' : 'boy'}"><div class="rider-hair"></div><div class="rider-head"></div><div class="rider-body"></div><div class="rider-arm left"></div><div class="rider-arm right"></div><div class="rider-leg left"></div><div class="rider-leg right"></div></div>` : `<div class="player-emoji">${avatar}</div>`}<div class="player-name">${h(child)}</div></div>
         <div class="rope"></div>
-        <div class="ship"><div class="ship-door"></div></div>
+        <div class="ship"><div class="ufo-hatch-ring"></div><div class="ufo-hatch-lid"></div><div class="ship-window w1"></div><div class="ship-window w2"></div><div class="ship-window w3"></div><div class="ship-body-line"></div><div class="ship-door"></div></div>
         <div class="head-token" title="голова ребёнка">${avatar}</div>
         <div class="goal ${allCorrect?'open':''}"></div>
         <div class="castle">${h(config.destination || '')}</div>
-        <div class="gate-label">${h(config.zone)}</div>
+        <div class="gate-label">${h(rp.key === 'archaeology' && allCorrect ? 'у пирамиды' : config.zone)}</div>
       </div>
       <div class="stage-checks">
         ${config.labels.map((label,i)=>`<div class="stage-check ${checks[i]?'done':''} ${wrong[i]?'bad':''}">${checks[i]?'✓':wrong[i]?'×':'•'} ${h(label)}</div>`).join('')}
       </div>
-      ${allCorrect ? `<div class="story-result"><b>Действие:</b> ${h(config.success)}</div>` : `<div class="story-wrong"><b>Что сделать:</b> ответь на вопросы в блоке “Языковой пароль”. ${rp.key === 'cosmos' ? 'После каждого правильного ответа страховочный трос подтянет космонавта ближе к кораблю.' : 'После каждого правильного ответа голова ребёнка и сам герой продвинутся по сцене.'}</div>`}
+      ${allCorrect ? `<div class="story-result"><b>Действие:</b> ${h(config.success)}</div>` : `<div class="story-wrong"><b>Что сделать:</b> ответь на вопросы в блоке “Языковой пароль”. ${rp.key === 'cosmos' ? 'После каждого правильного ответа страховочный трос подтянет космонавта ближе к тарелке.' : rp.key === 'archaeology' ? 'После каждого правильного ответа археолог на верблюде продвинется по тропинке ближе к пирамиде.' : 'После каждого правильного ответа голова ребёнка и сам герой продвинутся по сцене.'}</div>`}
     </div>`;
 }
 
